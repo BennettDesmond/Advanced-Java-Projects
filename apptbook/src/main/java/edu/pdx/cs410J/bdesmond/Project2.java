@@ -40,16 +40,27 @@ public class Project2 {
     String endTime = null;
     String end = null;
     int numOfOptions = 0;
+    String fileName;
     boolean printFlag = false;
+    boolean fileFlag = false;
+    boolean fileNameFlag = false;
     if(args.length == 0) {
       printErrorAndExit(USAGE_MESSAGE);
     }
     for (String arg : args) {
-      if(arg == "-README") {
+      if(fileNameFlag) {
+        fileName = arg;
+        fileNameFlag = false;
+        numOfOptions++;
+      } else if(arg == "-README") {
         readMe();
         numOfOptions++;
       } else if(arg == "-print") {
         printFlag = true;
+        numOfOptions++;
+      } else if(arg == "-textFile") {
+        fileNameFlag = true;
+        fileFlag = true;
         numOfOptions++;
       } else if(name == null) {
         name = arg;
@@ -191,12 +202,14 @@ public class Project2 {
    */
   private static void readMe() {
     System.out.println("Bennett Desmond\n");
-    System.out.println("Project 1\n");
+    System.out.println("Project 2\n");
     System.out.println("This program accepts parameters at the command line and makes" +
             "an appointment book and an appointment. This program only accepts one appointment" +
             "All parameters must be present for the project to run. The appointment book has" +
             "a name and an array of appointments, and the appointments have a description, a start time" +
-            "and an end time.\n");
+            "and an end time. If the -textFile option is set and a file is provided" +
+            ", then the appointment book is read from the file and the new appointment" +
+            "introduced on the command line is added to the file. \n");
     System.exit(0);
   }
 

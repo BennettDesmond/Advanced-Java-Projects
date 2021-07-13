@@ -135,4 +135,36 @@ class Project2IT extends InvokeMainTestCase {
     assertThat(result.getExitCode(), equalTo(0));
   }
 
+  @Test
+  void testTheProgramWithTheFileOptionSetButMissingOneArgument() {
+    MainMethodResult result = invokeMain("-textFile","book","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021");
+    assertThat(result.getTextWrittenToStandardError(), containsString("No ending time"));
+    assertThat(result.getTextWrittenToStandardOut(), emptyString());
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  void testTooManyOptionsGivenWithTheTextFileOption() {
+    MainMethodResult result = invokeMain("-textFile","book","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","22:00","This is unnecessary");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Too many arguments"));
+    assertThat(result.getTextWrittenToStandardOut(), emptyString());
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  void testWithTextFileOptionSelectedButWithoutAFileName() {
+    MainMethodResult result = invokeMain("-textFile","John", "Meeting with Bernice", "07/15/2021", "12:00", "07/15/2021", "22:00");
+    assertThat(result.getTextWrittenToStandardError(), containsString("No ending time"));
+    assertThat(result.getTextWrittenToStandardOut(), emptyString());
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  void testProgramResponseWithThreeOptions() {
+    MainMethodResult result = invokeMain("-print","-README","-textFile","book","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","13:00");
+    assertThat(result.getTextWrittenToStandardError(), emptyString());
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Bennett Desmond"));
+    assertThat(result.getExitCode(), equalTo(0));
+  }
+
 }
