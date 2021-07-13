@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  * The main class for the CS410J appointment book Project.
  * This class contains all of the command line parsing.
  */
-public class Project1 {
+public class Project2 {
   public static final String USAGE_MESSAGE = "usage: This is a command line program that needs an appointment book owner, and an appointment. An appointment needs a description and a start and end time.";
   static final String MISSING_DESCRIPTION = "No description was given.";
   static final String MISSING_BEGINDATE = "No starting date was given.";
