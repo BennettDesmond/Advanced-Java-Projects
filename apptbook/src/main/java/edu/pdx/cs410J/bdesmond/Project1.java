@@ -22,7 +22,7 @@ public class Project1 {
 
   /**
    * Main program that parses the command line, creates an
-   * <code>AppointmentBook</code> with an <code>Appointment/code>,
+   * <code>AppointmentBook</code> with an <code>Appointment</code>,
    * and prints either a description of the Appointment Book class
    * or a description of the appointment to
    * standard out by invoking its <code>toString</code> method.
