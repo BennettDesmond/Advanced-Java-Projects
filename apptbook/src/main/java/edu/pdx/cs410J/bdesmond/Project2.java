@@ -74,7 +74,7 @@ public class Project2 {
         startTime = arg;
       } else if (endDate == null) {
         endDate = arg;
-      } else {
+      } else if (endTime == null){
         endTime = arg;
       }
     }
