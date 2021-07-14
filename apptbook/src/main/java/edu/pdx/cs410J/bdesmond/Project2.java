@@ -1,5 +1,8 @@
 package edu.pdx.cs410J.bdesmond;
 
+import edu.pdx.cs410J.ParserException;
+
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,7 +45,7 @@ public class Project2 {
     String endTime = null;
     String end = null;
     int numOfOptions = 0;
-    String fileName;
+    String fileName = "";
     boolean printFlag = false;
     boolean fileFlag = false;
     boolean fileNameFlag = false;
@@ -88,6 +91,25 @@ public class Project2 {
     Appointment appointment = new Appointment(begin,end,description);
     AppointmentBook appointmentBook = new AppointmentBook(name);
     appointmentBook.addAppointment(appointment);
+
+    if(fileFlag) {
+      AppointmentBook appBook = new AppointmentBook();
+      try {
+        TextParser parser = new TextParser(fileName);
+        appBook = parser.parse();
+      } catch (ParserException e) {
+        System.err.println(e);
+      }
+      appBook.addAppointment(appointment);
+      try {
+        TextDumper dumper = new TextDumper();
+        dumper.dump(appBook);
+      } catch(IOException e) {
+        System.err.println(e);
+      }
+    }
+
+
     if(printFlag) {
       System.out.println(appointmentBook.getAppointments());
     } else {

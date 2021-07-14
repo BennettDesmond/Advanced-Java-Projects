@@ -16,15 +16,58 @@ public class TextParserTest {
     @Test
     void verifyThatIfParseIsPassedABadFileNameExceptionIsThrown() {
         TextParser parser = new TextParser();
+        assertDoesNotThrow(parser::parse);
+    }
+
+    @Test
+    void verifyThatExceptionIsThrownWhenEmptyFileIsPassed() {
+        String fileName = "emptyFile";
+        TextParser parser = new TextParser(fileName);
         assertThrows(ParserException.class, parser::parse);
     }
 
     @Test
-    void verifyThatNoExceptionsAreThrownWhenCorrectInformationIsPassedToParse() {
-        String fileName = "name";
-        TextParser parser = new TextParser(fileName);
-        assertDoesNotThrow(parser::parse);
-
+    void verifyThatTrueIsPassedWhenACorrectTimeIsPassedWithLeadingNumbers() {
+        TextParser parser = new TextParser();
+        assertThat(parser.validateTime("07/11/2021 14:39"), equalTo(true));
     }
+
+    @Test
+    void verifyThatTrueIsPassedWhenACorrectTimeIsPassedWithNoLeadingNumbers() {
+        TextParser parser = new TextParser();
+        assertThat(parser.validateTime("7/11/2021 4:39"), equalTo(true));
+    }
+
+    @Test
+    void verifyThatTrueIsPassedWhenACorrectTimeIsPassedWithNoLeadingNumbersOnFirst() {
+        TextParser parser = new TextParser();
+        assertThat(parser.validateTime("7/11/2021 14:39"), equalTo(true));
+    }
+
+    @Test
+    void verifyThatTrueIsPassedWhenACorrectTimeIsPassedWithNoLeadingNumbersOnSecond() {
+        TextParser parser = new TextParser();
+        assertThat(parser.validateTime("12/11/2021 4:39"), equalTo(true));
+    }
+
+    @Test
+    void verifyThatFalseIsPassedWhenAnIncorrectTimeIsPassed() {
+        TextParser parser = new TextParser();
+        assertThat(parser.validateTime("7/11/2021 25:39"), equalTo(false));
+    }
+
+    @Test
+    void verifyThatFalseIsPassedWhenAnIncorrectDateIsPassedDay() {
+        TextParser parser = new TextParser();
+        assertThat(parser.validateTime("12/32/2021 12:39"), equalTo(false));
+    }
+
+    @Test
+    void verifyThatFalseIsPassedWhenAnIncorrectDateIsPassedMonth() {
+        TextParser parser = new TextParser();
+        assertThat(parser.validateTime("13/31/2021 12:39"), equalTo(false));
+    }
+
+    //Write IT Tests once the dumper is implemented
 
 }

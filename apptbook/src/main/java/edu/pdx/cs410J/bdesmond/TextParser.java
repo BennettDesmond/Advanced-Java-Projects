@@ -4,8 +4,12 @@ import edu.pdx.cs410J.AppointmentBookParser;
 import edu.pdx.cs410J.ParserException;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+//import java.util.regex.Matcher.quoteReplacement(String);
 
 public class TextParser implements AppointmentBookParser{
     private String fileName;
@@ -20,6 +24,9 @@ public class TextParser implements AppointmentBookParser{
 
     public AppointmentBook parse() throws ParserException{
         try {
+            if(!fileVerification()) {
+                return new AppointmentBook();
+            }
             BufferedReader parser = new BufferedReader(new FileReader(fileName));
             if(!parser.ready()) {
                 throw new ParserException("Not able to read file");
@@ -47,7 +54,6 @@ public class TextParser implements AppointmentBookParser{
         String start = null;
         String end = null;
         String [] data = appointment.split(",");
-        Appointment app = new Appointment();
         for (String arg : data) {
             if (description == null) {
                 description = arg;
@@ -57,7 +63,37 @@ public class TextParser implements AppointmentBookParser{
                 end = arg;
             }
         }
-        return true;
+        if((description == null) || (start == null) || (end == null)) {
+            return null;
+        }
+        if(!validateTime(start)) {
+            return null;
+        }
+        if(!validateTime(end)) {
+            return null;
+        }
+        Appointment app = new Appointment(description,start,end);
+        return app;
+    }
+
+    public boolean validateTime(String time) {
+        String regex = "(0[0-9]|1[0-2]|[0-9])/([0-2][0-9]|3[01]?)/[0-9][0-9][0-9][0-9]\s([01]?[0-9]|2[0-3]|[0-9]):[0-5][0-9]";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(time);
+        return m.matches();
+    }
+
+    public boolean fileVerification() {
+        try {
+            File file = new File(fileName);
+            if(file.exists()) {
+                return true;
+            }
+            file.createNewFile();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
 }

@@ -6,6 +6,7 @@ import edu.pdx.cs410J.AppointmentBookDumper;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.LinkedList;
 
 public class TextDumper implements AppointmentBookDumper<AppointmentBook>{
     private String fileName;
@@ -29,19 +30,30 @@ public class TextDumper implements AppointmentBookDumper<AppointmentBook>{
     }
 
     public boolean fileVerification() {
-        try {
-            File file = new File(fileName);
-            file.createNewFile();
+        File file = new File(fileName);
+        if(file.exists()) {
             return true;
-        } catch (IOException e) {
+        } else {
             return false;
         }
     }
 
-    public boolean writeToFile(AppointmentBook AppointmentBook) {
+    public boolean writeToFile(AppointmentBook appBook) {
         try {
             FileWriter writer = new FileWriter(fileName);
-            writer.write("Hi");
+            writer.write(appBook.getOwnerName());
+            writer.write("\n");
+            LinkedList appointments = new LinkedList<Appointment>();
+            appointments = (LinkedList) appBook.getAppointments();
+            for (int i = 0; i < appointments.size(); i++) {
+                Appointment app = (Appointment) appointments.get(i);
+                writer.write(app.getDescription());
+                writer.write(",");
+                writer.write(app.getBeginTimeString());
+                writer.write(",");
+                writer.write(app.getEndTimeString());
+                writer.write("\n");
+            }
             writer.close();
             return true;
         } catch (IOException e) {

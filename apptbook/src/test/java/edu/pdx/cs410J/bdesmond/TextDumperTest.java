@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,7 +38,7 @@ public class TextDumperTest {
     void verifyTheReturnValueFromACorrectFileWriterRun() {
         String fileName = "name";
         TextDumper dumper = new TextDumper(fileName);
-        AppointmentBook book = new AppointmentBook();
+        AppointmentBook book = createAppointmentBook();
         assertThat(dumper.writeToFile(book), equalTo(true));
     }
 
@@ -52,8 +53,16 @@ public class TextDumperTest {
     void verifyThatNoExceptionsAreThrownWhenCorrectInformationIsPassed() {
         String fileName = "name";
         TextDumper dumper = new TextDumper(fileName);
-        AppointmentBook book = new AppointmentBook();
+        AppointmentBook book = createAppointmentBook();
         assertDoesNotThrow(() -> {dumper.dump(book);});
+    }
+
+    private AppointmentBook createAppointmentBook() {
+        Appointment app = new Appointment("07/15/2021 12:00","07/15/2021 13:00","Meeting with Barb");
+        LinkedList appLL = new LinkedList();
+        appLL.add(app);
+        AppointmentBook book = new AppointmentBook("John",appLL);
+        return book;
     }
 
 }
