@@ -19,6 +19,8 @@ public class Project2 {
   static final String MISSING_ENDTIME = "No ending time was given";
   static final String INCORRECT_DATE_FORMAT = "Incorrect Date format; correct: MM/dd/yyyy";
   static final String INCORRECT_TIME_FORMAT = "Incorrect Time format; correct: 24 hour time";
+  static final String ERROR_LOADING_FILE = "There was an error creating or opening your file.";
+  static final String ERROR_WRITING_TO_FILE = "There was an error writing to your file.";
 
   /**
    * Main program that parses the command line, creates an
