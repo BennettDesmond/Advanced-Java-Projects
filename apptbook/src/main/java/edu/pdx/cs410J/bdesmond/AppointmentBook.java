@@ -20,7 +20,7 @@ public class AppointmentBook extends AbstractAppointmentBook {
      */
     public AppointmentBook() {
         super();
-        owner = null;
+        owner = "";
         appointments = new LinkedList<Appointment>();
     }
 

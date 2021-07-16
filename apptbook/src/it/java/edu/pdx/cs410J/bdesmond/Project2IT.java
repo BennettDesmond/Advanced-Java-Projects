@@ -4,6 +4,7 @@ import edu.pdx.cs410J.InvokeMainTestCase;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -165,6 +166,45 @@ class Project2IT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardError(), emptyString());
     assertThat(result.getTextWrittenToStandardOut(), containsString("Bennett Desmond"));
     assertThat(result.getExitCode(), equalTo(0));
+  }
+
+  @Test
+  void errorThrownBecauseOfBadDateFormatInFile() {
+    MainMethodResult result = invokeMain("-textFile","badDateFormat","John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
+    assertThat(result.getTextWrittenToStandardError(), containsString("There was a problem with reading"));
+    assertThat(result.getTextWrittenToStandardOut(), emptyString());
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  void errorThrownBecauseOfMissingAppointmentBookName() {
+    MainMethodResult result = invokeMain("-textFile","missingNameInFile","John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
+    assertThat(result.getTextWrittenToStandardError(), containsString("The name on the file does not match the name"));
+    assertThat(result.getTextWrittenToStandardOut(), emptyString());
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  void noErrorThrownWithMissingAppointment() {
+    MainMethodResult result = invokeMain("-textFile","missingAppointmentOnFile","John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
+    assertThat(result.getTextWrittenToStandardError(), emptyString());
+    assertThat(result.getTextWrittenToStandardOut(), containsString("John's app"));
+    assertThat(result.getExitCode(), equalTo(0));
+  }
+
+  @Test
+  void goldenTestAddingToTheJohnFolder() {
+    MainMethodResult result = invokeMain("-textFile","john","John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
+    assertThat(result.getTextWrittenToStandardError(), emptyString());
+    assertThat(result.getTextWrittenToStandardOut(), containsString("John's"));
+    assertThat(result.getExitCode(), equalTo(0));
+  }
+  @Test
+  void addAnAppointmentToAnAppointmentBook() {
+    MainMethodResult result = invokeMain("-textFile","name","John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
+    assertThat(result.getTextWrittenToStandardError(), containsString("There was a problem with reading"));
+    assertThat(result.getTextWrittenToStandardOut(), emptyString());
+    assertThat(result.getExitCode(), equalTo(1));
   }
 
 }

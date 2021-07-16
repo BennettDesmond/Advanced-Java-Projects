@@ -20,10 +20,10 @@ public class TextParserTest {
     }
 
     @Test
-    void verifyThatExceptionIsThrownWhenEmptyFileIsPassed() {
+    void verifyThatNoExceptionIsThrownWhenEmptyFileIsPassed() {
         String fileName = "emptyFile";
         TextParser parser = new TextParser(fileName);
-        assertThrows(ParserException.class, parser::parse);
+        assertDoesNotThrow(parser::parse);
     }
 
     @Test

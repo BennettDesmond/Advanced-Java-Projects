@@ -29,8 +29,12 @@ public class TextParser implements AppointmentBookParser{
             }
             BufferedReader parser = new BufferedReader(new FileReader(fileName));
             if(!parser.ready()) {
-                throw new ParserException("Not able to read file");
+                return new AppointmentBook();
+                //throw new ParserException("Not able to read file");
             }
+            //if(parser.readLine() == null) {
+                //return new AppointmentBook();
+            //}
             String owner = parser.readLine();
             String appointmentStr = parser.readLine();
             AppointmentBook appBook = new AppointmentBook(owner);
@@ -72,7 +76,7 @@ public class TextParser implements AppointmentBookParser{
         if(!validateTime(end)) {
             return null;
         }
-        Appointment app = new Appointment(description,start,end);
+        Appointment app = new Appointment(start,end,description);
         return app;
     }
 

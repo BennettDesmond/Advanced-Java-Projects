@@ -92,28 +92,44 @@ public class Project2 {
     AppointmentBook appointmentBook = new AppointmentBook(name);
     appointmentBook.addAppointment(appointment);
 
+    AppointmentBook appBook = new AppointmentBook();
     if(fileFlag) {
-      AppointmentBook appBook = new AppointmentBook();
       try {
         TextParser parser = new TextParser(fileName);
         appBook = parser.parse();
       } catch (ParserException e) {
         System.err.println(e);
+        printErrorAndExit("The file cannot be parsed");
+      }
+      boolean nameComparison = name.equals(appBook.getOwnerName());
+      //System.out.println(name);
+      //System.out.println(appBook.getOwnerName());
+      //boolean nameComparison2 = appBook.getOwnerName().equals(null);
+      if(!nameComparison && (appBook.getOwnerName() != "")) {
+        printErrorAndExit("The name on the file does not match the name passed through the command line");
       }
       appBook.addAppointment(appointment);
       try {
-        TextDumper dumper = new TextDumper();
-        dumper.dump(appBook);
+        TextDumper dumper = new TextDumper(fileName);
+        if(appBook.getOwnerName() == "") {
+          dumper.dump(appointmentBook);
+        } else {
+          dumper.dump(appBook);
+        }
       } catch(IOException e) {
         System.err.println(e);
+        printErrorAndExit("The file cannot be written to");
       }
     }
-
 
     if(printFlag) {
       System.out.println(appointmentBook.getAppointments());
     } else {
-      System.out.println(appointmentBook);
+      if(fileFlag) {
+        System.out.println(appBook);
+      } else {
+        System.out.println(appointmentBook);
+      }
     }
 
     System.exit(0);
