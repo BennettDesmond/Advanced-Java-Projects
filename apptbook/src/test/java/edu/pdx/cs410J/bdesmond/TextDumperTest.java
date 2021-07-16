@@ -2,8 +2,9 @@ package edu.pdx.cs410J.bdesmond;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.LinkedList;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -20,9 +21,12 @@ public class TextDumperTest {
     }
 
     @Test
-    void verifyCorrectConstructorWithParametersIsCalled() {
+    void verifyCorrectConstructorWithParametersIsCalled(@TempDir File tempDir) throws IOException {
         String fileName = "name";
-        TextDumper dumper = new TextDumper(fileName);
+        File file = new File(tempDir, fileName);
+        assertThat(file.createNewFile(), equalTo(true));
+
+        TextDumper dumper = new TextDumper(file.getPath());
         AppointmentBook book = new AppointmentBook();
         assertThat(dumper.fileVerification(), equalTo(true));
     }
@@ -35,9 +39,11 @@ public class TextDumperTest {
     }
 
     @Test
-    void verifyTheReturnValueFromACorrectFileWriterRun() {
+    void verifyTheReturnValueFromACorrectFileWriterRun(@TempDir File tempDir) {
         String fileName = "name";
-        TextDumper dumper = new TextDumper(fileName);
+        File file = new File(tempDir, fileName);
+
+        TextDumper dumper = new TextDumper(file.getPath());
         AppointmentBook book = createAppointmentBook();
         assertThat(dumper.writeToFile(book), equalTo(true));
     }
@@ -50,9 +56,12 @@ public class TextDumperTest {
     }
 
     @Test
-    void verifyThatNoExceptionsAreThrownWhenCorrectInformationIsPassed() {
+    void verifyThatNoExceptionsAreThrownWhenCorrectInformationIsPassed(@TempDir File tempDir) throws IOException {
         String fileName = "name";
-        TextDumper dumper = new TextDumper(fileName);
+        File file = new File(tempDir, fileName);
+        assertThat(file.createNewFile(), equalTo(true));
+
+        TextDumper dumper = new TextDumper(file.getPath());
         AppointmentBook book = createAppointmentBook();
         assertDoesNotThrow(() -> {dumper.dump(book);});
     }

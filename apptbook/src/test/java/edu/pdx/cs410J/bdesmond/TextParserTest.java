@@ -3,7 +3,9 @@ package edu.pdx.cs410J.bdesmond;
 import edu.pdx.cs410J.ParserException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.File;
 import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -20,9 +22,11 @@ public class TextParserTest {
     }
 
     @Test
-    void verifyThatNoExceptionIsThrownWhenEmptyFileIsPassed() {
+    void verifyThatNoExceptionIsThrownWhenEmptyFileIsPassed(@TempDir File tempDir) {
         String fileName = "emptyFile";
-        TextParser parser = new TextParser(fileName);
+        File file = new File(tempDir, fileName);
+
+        TextParser parser = new TextParser(file.getPath());
         assertDoesNotThrow(parser::parse);
     }
 
