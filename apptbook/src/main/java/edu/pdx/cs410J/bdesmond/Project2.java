@@ -27,10 +27,13 @@ public class Project2 {
 
   /**
    * Main program that parses the command line, creates an
-   * <code>AppointmentBook</code> with an <code>Appointment/code>,
+   * <code>AppointmentBook</code> with an <code>Appointment</code>,
    * and prints either a description of the Appointment Book class
    * or a description of the appointment to
-   * standard out by invoking its <code>toString</code> method.
+   * standard out by invoking its <code>toString</code> method. If
+   * the -textFile option is set, the file will be parsed and the
+   * new appointment will be added to the book and the entire
+   * appointment book will be dumped to the file.
    * The -print option decides what will be printed.
    * @param args
    *        This is the array of arguments passed in from the command line.
@@ -102,9 +105,6 @@ public class Project2 {
         printErrorAndExit("The file cannot be parsed");
       }
       boolean nameComparison = name.equals(appBook.getOwnerName());
-      //System.out.println(name);
-      //System.out.println(appBook.getOwnerName());
-      //boolean nameComparison2 = appBook.getOwnerName().equals(null);
       if(!nameComparison && (appBook.getOwnerName() != "")) {
         printErrorAndExit("The name on the file does not match the name passed through the command line");
       }
