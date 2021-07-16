@@ -45,10 +45,10 @@ public class Project1 {
       printErrorAndExit(USAGE_MESSAGE);
     }
     for (String arg : args) {
-      if(arg == "-README") {
+      if(arg.equals("-README")) {
         readMe();
         numOfOptions++;
-      } else if(arg == "-print") {
+      } else if(arg.equals("-print")) {
         printFlag = true;
         numOfOptions++;
       } else if(name == null) {
