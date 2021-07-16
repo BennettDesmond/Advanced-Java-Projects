@@ -28,7 +28,7 @@ public class AppointmentBookTest {
     @Test
     void getOwnerNameCorrectOutputWithNull() {
         AppointmentBook appointmentBook = new AppointmentBook();
-        assertThat(appointmentBook.getOwnerName(), equalTo(null));
+        assertThat(appointmentBook.getOwnerName(), equalTo(""));
     }
 
     @Test
