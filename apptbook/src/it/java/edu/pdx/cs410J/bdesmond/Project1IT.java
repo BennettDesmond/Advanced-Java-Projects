@@ -121,9 +121,10 @@ class Project1IT extends InvokeMainTestCase {
 
   @Test
   void testWithPrintOptionSpecified() {
-    MainMethodResult result = invokeMain("-print","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","13:00");
+    //MainMethodResult result = invokeMain("-print","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","13:00");
+    MainMethodResult result = invokeMain("-print","test8","This is Test 8","03/03/2021","12:00","05/04/2021","16:00");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
-    String message = "Meeting with Bernice";
+    String message = "This is Test 8";
     assertThat(result.getTextWrittenToStandardOut(), containsString(message));
     assertThat(result.getExitCode(), equalTo(0));
   }
