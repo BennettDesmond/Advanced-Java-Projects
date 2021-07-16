@@ -60,13 +60,13 @@ public class Project2 {
         fileName = arg;
         fileNameFlag = false;
         numOfOptions++;
-      } else if(arg == "-README") {
+      } else if(arg.equals("-README")) {
         readMe();
         numOfOptions++;
-      } else if(arg == "-print") {
+      } else if(arg.equals("-print")) {
         printFlag = true;
         numOfOptions++;
-      } else if(arg == "-textFile") {
+      } else if(arg.equals("-textFile")) {
         fileNameFlag = true;
         fileFlag = true;
         numOfOptions++;
@@ -105,13 +105,13 @@ public class Project2 {
         printErrorAndExit("The file cannot be parsed");
       }
       boolean nameComparison = name.equals(appBook.getOwnerName());
-      if(!nameComparison && (appBook.getOwnerName() != "")) {
+      if(!nameComparison && (!appBook.getOwnerName().equals(""))) {
         printErrorAndExit("The name on the file does not match the name passed through the command line");
       }
       appBook.addAppointment(appointment);
       try {
         TextDumper dumper = new TextDumper(fileName);
-        if(appBook.getOwnerName() == "") {
+        if(appBook.getOwnerName().equals("")) {
           dumper.dump(appointmentBook);
         } else {
           dumper.dump(appBook);
