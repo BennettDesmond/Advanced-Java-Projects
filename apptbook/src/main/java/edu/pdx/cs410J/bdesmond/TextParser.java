@@ -3,10 +3,15 @@ package edu.pdx.cs410J.bdesmond;
 import edu.pdx.cs410J.AppointmentBookParser;
 import edu.pdx.cs410J.ParserException;
 
+import javax.swing.text.html.parser.Parser;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,27 +80,34 @@ public class TextParser implements AppointmentBookParser{
      */
     private Appointment parseAppointmentString(String appointment) {
         String description = null;
-        String start = null;
-        String end = null;
+        String startString = null;
+        String endString = null;
+        Date start;
+        Date end;
         String [] data = appointment.split(",");
         for (String arg : data) {
             if (description == null) {
                 description = arg;
-            } else if (start == null) {
-                start = arg;
-            } else if (end == null) {
-                end = arg;
+            } else if (startString == null) {
+                startString = arg;
+            } else if (endString == null) {
+                endString = arg;
             }
         }
-        if((description == null) || (start == null) || (end == null)) {
+        if((description == null) || (startString == null) || (endString == null)) {
             return null;
         }
-        if(!validateTime(start)) {
+        start = validateTime(startString);
+        end = validateTime(endString);
+        if(start == null || end == null) {
             return null;
         }
-        if(!validateTime(end)) {
-            return null;
-        }
+        //if(!validateTime(start)) {
+            //return null;
+        //}
+        //if(!validateTime(end)) {
+            //return null;
+        //}
         Appointment app = new Appointment(start,end,description);
         return app;
     }
@@ -108,11 +120,21 @@ public class TextParser implements AppointmentBookParser{
      * @return
      *          A boolean flag telling if the format is valid
      */
-    public boolean validateTime(String time) {
-        String regex = "(0[0-9]|1[0-2]|[0-9])/([0-2][0-9]|3[01]?)/[0-9][0-9][0-9][0-9]\\s([01]?[0-9]|2[0-3]|[0-9]):[0-5][0-9]";
+    public Date validateTime(String time) {
+        String regex = "(0[0-9]|1[0-2]|[0-9])/([0-2][0-9]|3[01]?)/([0-9][0-9][0-9][0-9]|[0-9][0-9])\\s([01]?[0-9]|2[0-3]|[0-9]):[0-5][0-9]\\s(AM|Am|aM|an|PM|pm|pM|Pm)";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(time);
-        return m.matches();
+        if(!m.matches()) {
+            return null;
+        }
+        Date dateClassObj = new Date();
+        DateFormat format = new SimpleDateFormat("MM/dd/yy hh:mm a");
+        try {
+            dateClassObj = format.parse(time);
+        } catch(ParseException e) {
+            return null;
+        }
+        return dateClassObj;
     }
 
     /**

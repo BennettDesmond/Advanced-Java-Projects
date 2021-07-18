@@ -13,15 +13,15 @@ import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * Integration tests for the {@link Project2} main class.
+ * Integration tests for the {@link Project3} main class.
  */
-class Project2IT extends InvokeMainTestCase {
+class Project3IT extends InvokeMainTestCase {
 
   /**
-   * Invokes the main method of {@link Project2} with the given arguments.
+   * Invokes the main method of {@link Project3} with the given arguments.
    */
   private MainMethodResult invokeMain(String... args) {
-    return invokeMain( Project2.class, args );
+    return invokeMain( Project3.class, args );
   }
 
   /**
@@ -30,7 +30,7 @@ class Project2IT extends InvokeMainTestCase {
   @Test
   void testNoCommandLineArguments() {
     MainMethodResult result = invokeMain();
-    assertThat(result.getTextWrittenToStandardError(), containsString(Project2.USAGE_MESSAGE));
+    assertThat(result.getTextWrittenToStandardError(), containsString(Project3.USAGE_MESSAGE));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
@@ -39,7 +39,7 @@ class Project2IT extends InvokeMainTestCase {
    */
   @Test
   void testWithAllCorrectValues() {
-    MainMethodResult result = invokeMain("John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","13:00");
+    MainMethodResult result = invokeMain("John","Meeting with Bernice","07/15/2021","12:00","am","07/15/2021","1:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
     String message = "John's appointment book with 1 appointments\n";
     assertThat(result.getTextWrittenToStandardOut(), equalTo(message));
@@ -74,45 +74,61 @@ class Project2IT extends InvokeMainTestCase {
   @Test
   void missingEndDate() {
     MainMethodResult result = invokeMain("John","This is an event","02/13/2000","14:39");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No ending date was given"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("No starting period was given."));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void missingEndTime() {
     MainMethodResult result = invokeMain("John","This is an event","02/13/2000","14:39","03/13/2000");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No ending time was given"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("No ending date was given"));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void tooManyArguments() {
-    MainMethodResult result = invokeMain("John","This is an event","02/13/2000","14:39","03/13/2000","23:45","otherField");
+    MainMethodResult result = invokeMain("John","This is an event","02/13/2000","11:39","am","03/13/2000","9:45","pm","otherField");
     assertThat(result.getTextWrittenToStandardError(), containsString("Too many arguments"));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void wrongDateformat() {
-    MainMethodResult result = invokeMain("John","This is an event","02132000","14:39","03/13/2000","23:45");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Incorrect Date format"));
+    MainMethodResult result = invokeMain("John","This is an event","02132000","10:39","pm","03/13/2000","3:45","am");
+    assertThat(result.getTextWrittenToStandardError(), containsString("There was a problem parsing your date. The format is incorrect"));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void wrongTimeformat() {
-    MainMethodResult result = invokeMain("John","This is an event","02/13/2000","1439","03/13/2000","23:45");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Incorrect Time format"));
+    MainMethodResult result = invokeMain("John","This is an event","02/13/2000","1139","am","03/13/2000","5:45","pm");
+    assertThat(result.getTextWrittenToStandardError(), containsString("There was a problem parsing your date. The format is incorrect"));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void testingDateFormatWithSingleDigitDay() {
-    MainMethodResult result = invokeMain("John","Meeting with Bernice","7/15/2021","12:00","7/15/2021","13:00");
+    MainMethodResult result = invokeMain("John","Meeting with Bernice","7/2/2021","12:00","am","7/15/2021","7:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
     String message = "John's appointment book with 1 appointments\n";
     assertThat(result.getTextWrittenToStandardOut(), equalTo(message));
     assertThat(result.getExitCode(), equalTo(0));
+  }
+
+  @Test
+  void testProgramByGiving24HourTime() {
+    MainMethodResult result = invokeMain("-print","John","Meeting with Bernice","07/15/2021","24:00","am","07/15/2021","13:00","pm");
+    assertThat(result.getTextWrittenToStandardError(), containsString("The time given needs to be in the 12 hour format"));
+    assertThat(result.getTextWrittenToStandardOut(), emptyString());
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  void testProgramByTimeWithoutTimePeriod() {
+    MainMethodResult result = invokeMain("-print","John","Meeting with Bernice","07/15/2021","24:00","07/15/2021","13:00");
+    assertThat(result.getTextWrittenToStandardError(), containsString("No ending time was given"));
+    assertThat(result.getTextWrittenToStandardOut(), emptyString());
+    assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
@@ -124,7 +140,7 @@ class Project2IT extends InvokeMainTestCase {
 
   @Test
   void testWithPrintOptionSpecified() {
-    MainMethodResult result = invokeMain("-print","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","13:00");
+    MainMethodResult result = invokeMain("-print","John","Meeting with Bernice","07/15/2021","12:00","am","07/15/2021","7:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
     String message = "Meeting with Bernice";
     assertThat(result.getTextWrittenToStandardOut(), containsString(message));
@@ -133,7 +149,7 @@ class Project2IT extends InvokeMainTestCase {
 
   @Test
   void testProgramResponseToTwoOptions() {
-    MainMethodResult result = invokeMain("-print","-README","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","13:00");
+    MainMethodResult result = invokeMain("-print","-README","John","Meeting with Bernice","07/15/2021","12:00","am","07/15/2021","1:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
     assertThat(result.getTextWrittenToStandardOut(), containsString("Bennett Desmond"));
     assertThat(result.getExitCode(), equalTo(0));
@@ -141,15 +157,15 @@ class Project2IT extends InvokeMainTestCase {
 
   @Test
   void testTheProgramWithTheFileOptionSetButMissingOneArgument() {
-    MainMethodResult result = invokeMain("-textFile","book","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No ending time"));
+    MainMethodResult result = invokeMain("-textFile","book","John","Meeting with Bernice","07/15/2021","12:00","am","07/15/2021","1:00");
+    assertThat(result.getTextWrittenToStandardError(), containsString("No ending period was given"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void testTooManyOptionsGivenWithTheTextFileOption() {
-    MainMethodResult result = invokeMain("-textFile","book","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","22:00","This is unnecessary");
+    MainMethodResult result = invokeMain("-textFile","book","John","Meeting with Bernice","07/15/2021","12:00","am","07/15/2021","22:00","pm","This is unnecessary");
     assertThat(result.getTextWrittenToStandardError(), containsString("Too many arguments"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
@@ -157,8 +173,8 @@ class Project2IT extends InvokeMainTestCase {
 
   @Test
   void testWithTextFileOptionSelectedButWithoutAFileName() {
-    MainMethodResult result = invokeMain("-textFile","John", "Meeting with Bernice", "07/15/2021", "12:00", "07/15/2021", "22:00");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No ending time"));
+    MainMethodResult result = invokeMain("-textFile","John", "Meeting with Bernice", "07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
+    assertThat(result.getTextWrittenToStandardError(), containsString("No ending period"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
   }
@@ -167,7 +183,7 @@ class Project2IT extends InvokeMainTestCase {
   void testProgramResponseWithThreeOptions(@TempDir File tempDir) throws IOException {
     File file = copyResourceIntoFileInDirectory(tempDir, "book");
 
-    MainMethodResult result = invokeMain("-print","-README","-textFile", file.getPath(), "John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","13:00");
+    MainMethodResult result = invokeMain("-print","-README","-textFile", file.getPath(), "John","Meeting with Bernice","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
     assertThat(result.getTextWrittenToStandardOut(), containsString("Bennett Desmond"));
     assertThat(result.getExitCode(), equalTo(0));
@@ -177,7 +193,7 @@ class Project2IT extends InvokeMainTestCase {
   void errorThrownBecauseOfBadDateFormatInFile(@TempDir File tempDir) throws IOException {
     File file = copyResourceIntoFileInDirectory(tempDir, "badDateFormat");
 
-    MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
+    MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), containsString("There was a problem with reading"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
@@ -187,7 +203,7 @@ class Project2IT extends InvokeMainTestCase {
   void errorThrownBecauseOfMissingAppointmentBookName(@TempDir File tempDir) throws IOException {
     File file = copyResourceIntoFileInDirectory(tempDir, "missingNameInFile");
 
-    MainMethodResult result = invokeMain("-textFile", file.getPath(),"John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
+    MainMethodResult result = invokeMain("-textFile", file.getPath(),"John","Meeting with Aruna","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), containsString("The name on the file does not match the name"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
@@ -197,7 +213,7 @@ class Project2IT extends InvokeMainTestCase {
   void noErrorThrownWithMissingAppointment(@TempDir File tempDir) throws IOException {
     File file = copyResourceIntoFileInDirectory(tempDir, "missingAppointmentOnFile");
 
-    MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
+    MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
     assertThat(result.getTextWrittenToStandardOut(), containsString("John's app"));
     assertThat(result.getExitCode(), equalTo(0));
@@ -207,7 +223,7 @@ class Project2IT extends InvokeMainTestCase {
   void goldenTestAddingToTheJohnFolder(@TempDir File tempDir) throws IOException {
     File file = copyResourceIntoFileInDirectory(tempDir, "john");
 
-    MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
+    MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
     assertThat(result.getTextWrittenToStandardOut(), containsString("John's"));
     assertThat(result.getExitCode(), equalTo(0));
@@ -216,7 +232,7 @@ class Project2IT extends InvokeMainTestCase {
   @Disabled("The \"name\" file appears to parse successfully??")
   void addAnAppointmentToAnAppointmentBook(@TempDir File tempDir) throws IOException {
     File file = copyResourceIntoFileInDirectory(tempDir, "name");
-    MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
+    MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), containsString("There was a problem with reading"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));

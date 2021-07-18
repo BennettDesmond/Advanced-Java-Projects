@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,17 +14,21 @@ import java.util.regex.Pattern;
  * The main class for the CS410J appointment book Project.
  * This class contains all of the command line parsing.
  */
-public class Project2 {
+public class Project3 {
   public static final String USAGE_MESSAGE = "usage: This is a command line program that needs an appointment book owner, and an appointment. An appointment needs a description and a start and end time.";
   static final String MISSING_DESCRIPTION = "No description was given.";
   static final String MISSING_BEGINDATE = "No starting date was given.";
   static final String MISSING_BEGINTIME = "No starting time was given.";
+  static final String MISSING_STARTPERIOD = "No starting period was given.";
   static final String MISSING_ENDDATE = "No ending date was given";
   static final String MISSING_ENDTIME = "No ending time was given";
+  static final String MISSING_ENDPERIOD = "No ending period was given";
   static final String INCORRECT_DATE_FORMAT = "Incorrect Date format; correct: MM/dd/yyyy";
   static final String INCORRECT_TIME_FORMAT = "Incorrect Time format; correct: 24 hour time";
   static final String ERROR_LOADING_FILE = "There was an error creating or opening your file.";
   static final String ERROR_WRITING_TO_FILE = "There was an error writing to your file.";
+  static final String ERROR_PARSING_DATE = "There was a problem parsing your date. The format is incorrect";
+  static final int NUMOFARGUMENTS = 8;
 
   /**
    * Main program that parses the command line, creates an
@@ -39,19 +44,24 @@ public class Project2 {
    *        This is the array of arguments passed in from the command line.
    */
   public static void main(String[] args) {
-    String name = null;
-    String description = null;
-    String startDate = null;
-    String startTime = null;
-    String begin = null;
-    String endDate = null;
-    String endTime = null;
-    String end = null;
-    int numOfOptions = 0;
+    String name = "";
+    String description = "";
+    String startDate = "";
+    String startTime = "";
+    String startPeriod = "";
+    //String begin = "";
+    String endDate = "";
+    String endTime = "";
+    String endPeriod = "";
+    //String end = "";
     String fileName = "";
+    int numOfOptions = 0;
     boolean printFlag = false;
     boolean fileFlag = false;
     boolean fileNameFlag = false;
+    Date begin;
+    Date end;
+
     if(args.length == 0) {
       printErrorAndExit(USAGE_MESSAGE);
     }
@@ -70,32 +80,60 @@ public class Project2 {
         fileNameFlag = true;
         fileFlag = true;
         numOfOptions++;
-      } else if(name == null) {
+      } else if(name.equals("")) {
         name = arg;
-      } else if (description == null) {
+      } else if (description.equals("")) {
         description = arg;
-      } else if (startDate == null) {
+      } else if (startDate.equals("")) {
         startDate = arg;
-      } else if (startTime == null) {
+      } else if (startTime.equals("")) {
         startTime = arg;
-      } else if (endDate == null) {
+      } else if (startPeriod.equals("")) {
+        startPeriod = arg;
+      } else if (endDate.equals("")) {
         endDate = arg;
-      } else if (endTime == null){
+      } else if (endTime.equals("")){
         endTime = arg;
+      } else if (endPeriod.equals("")) {
+        endPeriod = arg;
       }
     }
-    if(args.length > (6+numOfOptions)) {
+    if(args.length > (NUMOFARGUMENTS+numOfOptions)) {
       System.err.println("Too many arguments");
       printErrorAndExit(USAGE_MESSAGE);
     }
-    validateInput(name,description,startDate,startTime,endDate,endTime);
-    begin = startDate + " " + startTime;
-    end = endDate + " " + endTime;
+    validateInput(name,description,startDate,startTime,startPeriod,endDate,endTime,endPeriod);
+    //begin = startDate + " " + startTime;
+    //end = endDate + " " + endTime;
+    if(!validate12HourTime(startTime) || !validate12HourTime(endTime)) {
+      printErrorAndExit("The time given needs to be in the 12 hour format");
+    }
+    begin = validateDate(startDate, startTime, startPeriod);
+    end = validateDate(endDate, endTime, endPeriod);
     Appointment appointment = new Appointment(begin,end,description);
     AppointmentBook appointmentBook = new AppointmentBook(name);
     appointmentBook.addAppointment(appointment);
 
     AppointmentBook appBook = new AppointmentBook();
+    appBook = parseFileAndDump(name, fileName, fileFlag, appointment, appointmentBook, appBook);
+    printAppointmentOrAppointmentBookInfo(printFlag,fileFlag,appointmentBook,appBook);
+
+    System.exit(0);
+  }
+
+  private static void printAppointmentOrAppointmentBookInfo(boolean printFlag,boolean fileFlag,AppointmentBook appointmentBook, AppointmentBook appBook) {
+    if(printFlag) {
+      System.out.println(appointmentBook.getAppointments());
+    } else {
+      if(fileFlag) {
+        System.out.println(appBook);
+      } else {
+        System.out.println(appointmentBook);
+      }
+    }
+  }
+
+  private static AppointmentBook parseFileAndDump(String name, String fileName, boolean fileFlag, Appointment appointment, AppointmentBook appointmentBook, AppointmentBook appBook) {
     if(fileFlag) {
       try {
         TextParser parser = new TextParser(fileName);
@@ -121,18 +159,7 @@ public class Project2 {
         printErrorAndExit("The file cannot be written to");
       }
     }
-
-    if(printFlag) {
-      System.out.println(appointmentBook.getAppointments());
-    } else {
-      if(fileFlag) {
-        System.out.println(appBook);
-      } else {
-        System.out.println(appointmentBook);
-      }
-    }
-
-    System.exit(0);
+    return appBook;
   }
 
   /**
@@ -164,22 +191,38 @@ public class Project2 {
    * @param endTime
    *        End time of the appointment
    */
-  private static void validateInput(String name,String description,String startDate,String startTime,String endDate,String endTime) {
-    if(name == null) {
+  private static void validateInput(String name,String description,String startDate,String startTime,String startPeriod,String endDate,String endTime,String endPeriod) {
+    if(name.equals("")) {
       printErrorAndExit(USAGE_MESSAGE);
-    } else if(description == null) {
+    } else if(description.equals("")) {
       printErrorAndExit(MISSING_DESCRIPTION);
-    } else if(startDate == null) {
+    } else if(startDate.equals("")) {
       printErrorAndExit(MISSING_BEGINDATE);
-    } else if(startTime == null) {
+    } else if(startTime.equals("")) {
       printErrorAndExit(MISSING_BEGINTIME);
-    } else if(endDate == null) {
+    } else if(startPeriod.equals("")) {
+      printErrorAndExit(MISSING_STARTPERIOD);
+    } else if(endDate.equals("")) {
       printErrorAndExit(MISSING_ENDDATE);
-    } else if(endTime == null) {
+    } else if(endTime.equals("")) {
       printErrorAndExit(MISSING_ENDTIME);
+    } else if(endPeriod.equals("")) {
+      printErrorAndExit(MISSING_ENDPERIOD);
     }
-    validateEventDates(startDate,startTime);
-    validateEventDates(endDate,endTime);
+    //validateEventDates(startDate,startTime);
+    //validateEventDates(endDate,endTime);
+  }
+
+  private static Date validateDate(String date, String time, String period) {
+    String dateString = date + " " + time + " " + period;
+    Date dateClassObj = new Date();
+    DateFormat format = new SimpleDateFormat("MM/dd/yy hh:mm a");
+    try {
+      dateClassObj = format.parse(dateString);
+    } catch(ParseException e) {
+      printErrorAndExit(ERROR_PARSING_DATE);
+    }
+    return dateClassObj;
   }
 
   /**
@@ -190,6 +233,7 @@ public class Project2 {
    *        This function returns a boolean value telling the caller
    *        if the date is valid.
    */
+  /*
   private static boolean validateDate(String date) {
     DateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
     sdf.setLenient(false);
@@ -200,6 +244,7 @@ public class Project2 {
     }
     return true;
   }
+  */
 
   /**
    * This function validates the time to make sure that it
@@ -210,11 +255,26 @@ public class Project2 {
    *        This function returns a boolean flag telling if
    *        the time is in the correct format or not.
    */
+  /*
   private static boolean validateTime(String time) {
     String regex = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
     Pattern p = Pattern.compile(regex);
     Matcher m = p.matcher(time);
     return m.matches();
+  }
+  */
+
+  private static boolean validate12HourTime(String time) {
+    String regex1 = "(0[0-9]|[0-9]|1[0-2]):[0-5][0-9]";
+    String regex2 = "(0[0-9]|[0-9]|1[0-9]|2[0-4]):[0-5][0-9]";
+    Pattern p1 = Pattern.compile(regex1);
+    Pattern p2 = Pattern.compile(regex2);
+    Matcher m1 = p1.matcher(time);
+    Matcher m2 = p2.matcher(time);
+    if(!m1.matches() && m2.matches()) {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -227,6 +287,7 @@ public class Project2 {
    * @param time
    *        This is the time for the event
    */
+  /*
   private static void validateEventDates(String date, String time) {
     if(!validateDate(date)) {
       printErrorAndExit(INCORRECT_DATE_FORMAT);
@@ -235,6 +296,7 @@ public class Project2 {
       printErrorAndExit(INCORRECT_TIME_FORMAT);
     }
   }
+  */
 
   /**
    * This is the readme for the program. It simply prints out a

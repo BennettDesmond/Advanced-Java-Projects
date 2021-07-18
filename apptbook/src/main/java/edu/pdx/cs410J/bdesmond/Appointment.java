@@ -2,14 +2,17 @@ package edu.pdx.cs410J.bdesmond;
 
 import edu.pdx.cs410J.AbstractAppointment;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 /**
  * This class extends the abstractAppointment class.
  * It holds the data for an appointment and the necessary
  * methods to manage the data.
  */
 public class Appointment extends AbstractAppointment {
-  private String beginTime;
-  private String endTime;
+  private Date beginTime;
+  private Date endTime;
   private String description;
 
   /**
@@ -17,9 +20,9 @@ public class Appointment extends AbstractAppointment {
    */
   public Appointment() {
     super();
-    this.beginTime = null;
-    this.endTime = null;
-    this.description = null;
+    beginTime = new Date();
+    endTime = new Date();
+    this.description = "";
   }
 
   /**
@@ -31,7 +34,7 @@ public class Appointment extends AbstractAppointment {
    * @param description
    *        This parameter gives a description of the appointment
    */
-  public Appointment(String beginTime, String endTime, String description) {
+  public Appointment(Date beginTime, Date endTime, String description) {
     super();
     this.beginTime = beginTime;
     this.endTime = endTime;
@@ -45,7 +48,7 @@ public class Appointment extends AbstractAppointment {
    */
   @Override
   public String getBeginTimeString() {
-    return beginTime;
+    return DateFormat.getDateInstance(DateFormat.SHORT).format(beginTime) + " " + DateFormat.getTimeInstance(DateFormat.SHORT).format(beginTime);
   }
 
   /**
@@ -55,6 +58,14 @@ public class Appointment extends AbstractAppointment {
    */
   @Override
   public String getEndTimeString() {
+    return DateFormat.getDateInstance(DateFormat.SHORT).format(endTime) + " " + DateFormat.getTimeInstance(DateFormat.SHORT).format(endTime);
+  }
+
+  public Date getBeginTime() {
+    return beginTime;
+  }
+
+  public Date getEndTime() {
     return endTime;
   }
 

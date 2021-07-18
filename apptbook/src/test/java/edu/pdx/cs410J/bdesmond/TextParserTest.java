@@ -57,7 +57,7 @@ public class TextParserTest {
     @Test
     void verifyThatFalseIsPassedWhenAnIncorrectTimeIsPassed() {
         TextParser parser = new TextParser();
-        assertThat(parser.validateTime("7/11/2021 25:39"), equalTo(false));
+        assertThat(parser.validateTime("7/11/2021 25:39 am"), equalTo(null));
     }
 
     @Test
