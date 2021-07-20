@@ -121,7 +121,7 @@ public class TextParser implements AppointmentBookParser{
      *          A boolean flag telling if the format is valid
      */
     public Date validateTime(String time) {
-        String regex = "(0[0-9]|1[0-2]|[0-9])/([0-2][0-9]|3[01]?)/([0-9][0-9][0-9][0-9]|[0-9][0-9])\\s([01]?[0-9]|2[0-3]|[0-9]):[0-5][0-9]\\s(AM|Am|aM|an|PM|pm|pM|Pm)";
+        String regex = "(0[0-9]|1[0-2]|[0-9])/([0-2][0-9]|3[0-1])/([0-9][0-9][0-9][0-9]|[0-9][0-9])\\s(0[0-9]|1[0-2]|[0-9]):[0-5][0-9]\\s(AM|Am|aM|am|PM|pm|pM|Pm)";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(time);
         if(!m.matches()) {

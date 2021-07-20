@@ -102,4 +102,44 @@ public class AppointmentTest {
     assertThat(appointment.getEndTime(), equalTo(date));
   }
 
+  @Test
+  void testCompareMethodWithDifferingStartValues() {
+    Appointment appointment1 = new Appointment(setupDateObject("7/15/2021 9:00 am"), setupDateObject("7/15/2021 2:00 pm"), "Meeting with Bernice");
+    Appointment appointment2 = new Appointment(setupDateObject("7/15/2021 1:00 pm"), setupDateObject("7/15/2021 2:00 pm"), "Meeting with Bernice");
+    assertThat(appointment1.compareTo(appointment2), equalTo(-1));
+
+    appointment1 = new Appointment(setupDateObject("7/15/2021 1:00 pm"), setupDateObject("7/15/2021 2:00 pm"), "Meeting with Bernice");
+    appointment2 = new Appointment(setupDateObject("7/15/2021 9:00 am"), setupDateObject("7/15/2021 2:00 pm"), "Meeting with Bernice");
+    assertThat(appointment1.compareTo(appointment2), equalTo(1));
+  }
+
+  @Test
+  void testCompareMethodWithDifferingEndingValues() {
+    Appointment appointment1 = new Appointment(setupDateObject("7/15/2021 9:00 am"), setupDateObject("7/15/2021 2:00 pm"), "Meeting with Bernice");
+    Appointment appointment2 = new Appointment(setupDateObject("7/15/2021 9:00 am"), setupDateObject("7/15/2021 7:00 pm"), "Meeting with Bernice");
+    assertThat(appointment1.compareTo(appointment2), equalTo(-1));
+
+    appointment1 = new Appointment(setupDateObject("7/15/2021 9:00 am"), setupDateObject("7/15/2021 7:00 pm"), "Meeting with Bernice");
+    appointment2 = new Appointment(setupDateObject("7/15/2021 9:00 am"), setupDateObject("7/15/2021 2:00 pm"), "Meeting with Bernice");
+    assertThat(appointment1.compareTo(appointment2), equalTo(1));
+  }
+
+  @Test
+  void testCompareMethodWithDifferingDescriptions() {
+    Appointment appointment1 = new Appointment(setupDateObject("7/15/2021 9:00 am"), setupDateObject("7/15/2021 2:00 pm"), "abc");
+    Appointment appointment2 = new Appointment(setupDateObject("7/15/2021 9:00 am"), setupDateObject("7/15/2021 2:00 pm"), "bcd");
+    assertThat(appointment1.compareTo(appointment2), equalTo(-1));
+
+    appointment1 = new Appointment(setupDateObject("7/15/2021 9:00 am"), setupDateObject("7/15/2021 2:00 pm"), "bcd");
+    appointment2 = new Appointment(setupDateObject("7/15/2021 9:00 am"), setupDateObject("7/15/2021 2:00 pm"), "abc");
+    assertThat(appointment1.compareTo(appointment2), equalTo(1));
+  }
+
+  @Test
+  void testCompareMethodWithAllMatchingValues() {
+    Appointment appointment1 = new Appointment(setupDateObject("7/15/2021 9:00 am"), setupDateObject("7/15/2021 2:00 pm"), "Meeting with Bernice");
+    Appointment appointment2 = new Appointment(setupDateObject("7/15/2021 9:00 am"), setupDateObject("7/15/2021 2:00 pm"), "Meeting with Bernice");
+    assertThat(appointment1.compareTo(appointment2), equalTo(0));
+  }
+
 }

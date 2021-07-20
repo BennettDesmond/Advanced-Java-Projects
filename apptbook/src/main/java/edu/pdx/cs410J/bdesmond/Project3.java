@@ -54,11 +54,15 @@ public class Project3 {
     String endTime = "";
     String endPeriod = "";
     //String end = "";
-    String fileName = "";
+    String fileNameText = "";
+    String fileNamePretty = "";
     int numOfOptions = 0;
     boolean printFlag = false;
     boolean fileFlag = false;
-    boolean fileNameFlag = false;
+    boolean fileNameTextFlag = false;
+    boolean prettyFlag = false;
+    boolean prettyFileFlag = false;
+    boolean fileNamePrettyFlag = false;
     Date begin;
     Date end;
 
@@ -66,9 +70,14 @@ public class Project3 {
       printErrorAndExit(USAGE_MESSAGE);
     }
     for (String arg : args) {
-      if(fileNameFlag) {
-        fileName = arg;
-        fileNameFlag = false;
+      if(fileNameTextFlag || fileNamePrettyFlag) {
+        if(fileNamePrettyFlag) {
+          fileNamePretty = arg;
+          fileNamePrettyFlag = false;
+        } else {
+          fileNameText = arg;
+          fileNameTextFlag = false;
+        }
         numOfOptions++;
       } else if(arg.equals("-README")) {
         readMe();
@@ -77,8 +86,12 @@ public class Project3 {
         printFlag = true;
         numOfOptions++;
       } else if(arg.equals("-textFile")) {
-        fileNameFlag = true;
+        fileNameTextFlag = true;
         fileFlag = true;
+        numOfOptions++;
+      } else if (arg.equals("-pretty")) {
+        fileNamePrettyFlag = true;
+        prettyFlag = true;
         numOfOptions++;
       } else if(name.equals("")) {
         name = arg;
@@ -102,12 +115,10 @@ public class Project3 {
       System.err.println("Too many arguments");
       printErrorAndExit(USAGE_MESSAGE);
     }
-    validateInput(name,description,startDate,startTime,startPeriod,endDate,endTime,endPeriod);
-    //begin = startDate + " " + startTime;
-    //end = endDate + " " + endTime;
     if(!validate12HourTime(startTime) || !validate12HourTime(endTime)) {
       printErrorAndExit("The time given needs to be in the 12 hour format");
     }
+    validateInput(name,description,startDate,startTime,startPeriod,endDate,endTime,endPeriod,fileNameTextFlag,fileNamePrettyFlag);
     begin = validateDate(startDate, startTime, startPeriod);
     end = validateDate(endDate, endTime, endPeriod);
     Appointment appointment = new Appointment(begin,end,description);
@@ -115,10 +126,31 @@ public class Project3 {
     appointmentBook.addAppointment(appointment);
 
     AppointmentBook appBook = new AppointmentBook();
-    appBook = parseFileAndDump(name, fileName, fileFlag, appointment, appointmentBook, appBook);
+    appBook = parseFileAndDump(name, fileNameText, fileFlag, appointment, appointmentBook, appBook);
     printAppointmentOrAppointmentBookInfo(printFlag,fileFlag,appointmentBook,appBook);
+    prettyPrinter(fileNamePretty, prettyFlag, appBook);
 
     System.exit(0);
+  }
+
+  private static void prettyPrinter(String fileNamePretty, boolean prettyFlag, AppointmentBook appBook) {
+    if(prettyFlag) {
+      if(fileNamePretty.equals("-")) {
+        PrettyPrinter printer = new PrettyPrinter(fileNamePretty,false);
+        try {
+          printer.dump(appBook);
+        } catch (IOException e) {
+          printErrorAndExit("Trouble printing an AppointmentBook using pretty print");
+        }
+      } else {
+        PrettyPrinter printer = new PrettyPrinter(fileNamePretty,true);
+        try {
+          printer.dump(appBook);
+        } catch (IOException e) {
+          printErrorAndExit("Trouble printing an AppointmentBook using pretty print");
+        }
+      }
+    }
   }
 
   private static void printAppointmentOrAppointmentBookInfo(boolean printFlag,boolean fileFlag,AppointmentBook appointmentBook, AppointmentBook appBook) {
@@ -158,6 +190,8 @@ public class Project3 {
         System.err.println(e);
         printErrorAndExit("The file cannot be written to");
       }
+    } else {
+      appBook.addAppointment(appointment);
     }
     return appBook;
   }
@@ -191,7 +225,7 @@ public class Project3 {
    * @param endTime
    *        End time of the appointment
    */
-  private static void validateInput(String name,String description,String startDate,String startTime,String startPeriod,String endDate,String endTime,String endPeriod) {
+  private static void validateInput(String name,String description,String startDate,String startTime,String startPeriod,String endDate,String endTime,String endPeriod,boolean fileNameTextFlag,boolean fileNamePrettyFlag) {
     if(name.equals("")) {
       printErrorAndExit(USAGE_MESSAGE);
     } else if(description.equals("")) {
@@ -209,8 +243,11 @@ public class Project3 {
     } else if(endPeriod.equals("")) {
       printErrorAndExit(MISSING_ENDPERIOD);
     }
-    //validateEventDates(startDate,startTime);
-    //validateEventDates(endDate,endTime);
+    //else if(fileNameTextFlag) {
+      //printErrorAndExit("The file option was selected but a file was not provided");
+    //} else if(fileNamePrettyFlag) {
+      //printErrorAndExit("The pretty print option was selected but a file was not provided");
+    //}
   }
 
   private static Date validateDate(String date, String time, String period) {

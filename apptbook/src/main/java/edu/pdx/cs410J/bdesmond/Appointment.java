@@ -10,7 +10,7 @@ import java.util.Date;
  * It holds the data for an appointment and the necessary
  * methods to manage the data.
  */
-public class Appointment extends AbstractAppointment {
+public class Appointment extends AbstractAppointment implements Comparable<Appointment>{
   private Date beginTime;
   private Date endTime;
   private String description;
@@ -77,5 +77,34 @@ public class Appointment extends AbstractAppointment {
   @Override
   public String getDescription() {
     return description;
+  }
+
+  @Override
+  public int compareTo(Appointment app) {
+    Date begin1 = this.getBeginTime();
+    Date begin2 = app.getBeginTime();
+    if (begin1.compareTo(begin2) > 0) {
+      return 1; //This is larger than app also known as later chronologically.
+    } else if (begin1.compareTo(begin2) < 0) {
+      return -1; //This is smaller than app aldo know as app is after this.
+    }
+
+    Date end1 = this.getEndTime();
+    Date end2 = app.getEndTime();
+    if (end1.compareTo(end2) > 0) {
+      return 1; //This is larger than app also known as later chronologically.
+    } else if (end1.compareTo(end2) < 0) {
+      return -1; //This is smaller than app aldo know as app is after this.
+    }
+
+    String desc1 = this.getDescription();
+    String desc2 = app.getDescription();
+    if (desc1.compareTo(desc2) > 0) {
+      return 1; //This is larger than app also known as later chronologically.
+    } else if (desc1.compareTo(desc2) < 0) {
+      return -1; //This is smaller than app aldo know as app is after this.
+    } else {
+      return 0;
+    }
   }
 }

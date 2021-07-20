@@ -73,14 +73,14 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void missingEndDate() {
-    MainMethodResult result = invokeMain("John","This is an event","02/13/2000","14:39");
+    MainMethodResult result = invokeMain("John","This is an event","02/13/2000","11:39");
     assertThat(result.getTextWrittenToStandardError(), containsString("No starting period was given."));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void missingEndTime() {
-    MainMethodResult result = invokeMain("John","This is an event","02/13/2000","14:39","03/13/2000");
+    MainMethodResult result = invokeMain("John","This is an event","02/13/2000","10:39","03/13/2000");
     assertThat(result.getTextWrittenToStandardError(), containsString("No ending date was given"));
     assertThat(result.getExitCode(), equalTo(1));
   }
@@ -125,7 +125,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void testProgramByTimeWithoutTimePeriod() {
-    MainMethodResult result = invokeMain("-print","John","Meeting with Bernice","07/15/2021","24:00","07/15/2021","13:00");
+    MainMethodResult result = invokeMain("-print","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","13:00");
     assertThat(result.getTextWrittenToStandardError(), containsString("No ending time was given"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
@@ -236,6 +236,29 @@ class Project3IT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardError(), containsString("There was a problem with reading"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  void correctRunWithPrettyPrintSelectedAndAFileGiven(@TempDir File tempDir) throws IOException {
+    File fileStor = copyResourceIntoFileInDirectory(tempDir, "john");
+    File filePretty = copyResourceIntoFileInDirectory(tempDir, "prettyFile");
+
+    MainMethodResult result = invokeMain("-pretty",filePretty.getPath(),"-textFile",fileStor.getPath(), "John","Meeting with Matthew","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
+    assertThat(result.getTextWrittenToStandardError(), emptyString());
+    assertThat(result.getTextWrittenToStandardOut(), containsString("John's appointment book with    "));
+    assertThat(result.getExitCode(), equalTo(0));
+  }
+
+  @Test
+  void correctRunWithPrettyPrintSelectedAndNoFileGiven(@TempDir File tempDir) throws IOException {
+    File fileStor = copyResourceIntoFileInDirectory(tempDir, "john");
+
+    MainMethodResult result = invokeMain("-pretty","-","-textFile", fileStor.getPath(), "John","Meeting with Aruna","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
+    assertThat(result.getTextWrittenToStandardError(), emptyString());
+    assertThat(result.getTextWrittenToStandardOut(), containsString("John's appointment book with  "));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("******************************************\n" +
+            "John's Appointment Book"));
+    assertThat(result.getExitCode(), equalTo(0));
   }
 
   private File copyResourceIntoFileInDirectory(File directory, String resourceName) throws IOException {

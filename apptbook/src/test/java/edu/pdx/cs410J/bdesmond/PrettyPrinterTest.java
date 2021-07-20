@@ -30,18 +30,12 @@ public class PrettyPrinterTest {
     }
 
     @Test
-    void verifyThatDumpToFileReturnsCorrectlyWithDefaultConstructor() {
-        PrettyPrinter printer = new PrettyPrinter();
-        assertThat(printer.dumpToFile(), equalTo(true));
+    void returnsIOExceptionWhenBadFileIsPassed() {
+        PrettyPrinter printer = new PrettyPrinter("",true);
+        AppointmentBook appBook = createAppointmentBook();
+        assertThrows(IOException.class, () -> {printer.dump(appBook);});
     }
 
-    @Test
-    void verifyThatDumpToStandardOutReturnsCorrectlyWithDefaultConstructor() {
-        PrettyPrinter printer = new PrettyPrinter();
-        assertThat(printer.dumpToStandardOut(), equalTo(true));
-    }
-
-    @Disabled
     @Test
     void verifyCorrectConstructorWithParametersIsCalled(@TempDir File tempDir) throws IOException {
         String fileName = "name";
@@ -53,7 +47,6 @@ public class PrettyPrinterTest {
         assertThat(dumper.fileVerification(), equalTo(true));
     }
 
-    @Disabled
     @Test
     void verifyThatTheWriterDoesntWriteToABadFileName() {
         TextDumper dumper = new TextDumper();
@@ -61,7 +54,6 @@ public class PrettyPrinterTest {
         assertThat(dumper.writeToFile(book), equalTo(false));
     }
 
-    @Disabled
     @Test
     void verifyTheReturnValueFromACorrectFileWriterRun(@TempDir File tempDir) {
         String fileName = "name";
@@ -72,15 +64,21 @@ public class PrettyPrinterTest {
         assertThat(dumper.writeToFile(book), equalTo(true));
     }
 
-    @Disabled
     @Test
-    void verifyThatIfDumpIsPassedABadFileNameExceptionIsThrown() {
-        TextDumper dumper = new TextDumper();
+    void verifyThatIfPrinterIsPassedABadFileNameExceptionIsThrown() {
+        PrettyPrinter printer = new PrettyPrinter();
         AppointmentBook book = new AppointmentBook();
-        assertThrows(IOException.class, () -> {dumper.dump(book);});
+        assertThrows(IOException.class, () -> {printer.dump(book);});
     }
 
-    @Disabled
+    @Test
+    void verifyThatIfDumpIsPassedABadFileNameExceptionIsThrown() {
+        PrettyPrinter printer = new PrettyPrinter();
+        AppointmentBook book = new AppointmentBook();
+        //assertDoesN(IOException.class, () -> {printer.dumpToStandardOut(book);});
+        assertDoesNotThrow(() -> {printer.dump(book);});
+    }
+
     @Test
     void verifyThatNoExceptionsAreThrownWhenCorrectInformationIsPassed(@TempDir File tempDir) throws IOException {
         String fileName = "name";
@@ -91,6 +89,8 @@ public class PrettyPrinterTest {
         AppointmentBook book = createAppointmentBook();
         assertDoesNotThrow(() -> {dumper.dump(book);});
     }
+
+
 
     private AppointmentBook createAppointmentBook() {
         Appointment app = new Appointment(setupDateObject("07/15/2021 12:00 am"),setupDateObject("07/15/2021 12:00 pm"),"Meeting with Barb");
