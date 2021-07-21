@@ -245,7 +245,7 @@ class Project3IT extends InvokeMainTestCase {
 
     MainMethodResult result = invokeMain("-pretty",filePretty.getPath(),"-textFile",fileStor.getPath(), "John","Meeting with Matthew","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
-    assertThat(result.getTextWrittenToStandardOut(), containsString("John's appointment book with    "));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("John's appointment book with "));
     assertThat(result.getExitCode(), equalTo(0));
   }
 
@@ -255,7 +255,7 @@ class Project3IT extends InvokeMainTestCase {
 
     MainMethodResult result = invokeMain("-pretty","-","-textFile", fileStor.getPath(), "John","Meeting with Aruna","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
-    assertThat(result.getTextWrittenToStandardOut(), containsString("John's appointment book with  "));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("John's appointment book with "));
     assertThat(result.getTextWrittenToStandardOut(), containsString("******************************************\n" +
             "John's Appointment Book"));
     assertThat(result.getExitCode(), equalTo(0));
@@ -263,13 +263,21 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void testWithStartDateAfterEndDate() {
-    MainMethodResult result = invokeMain("-pretty","-","-textFile","johnFile","John", "Meeting with Casandra", "07/13/2021", "12:00", "am","07/14/2021", "2:00","pm");
+    MainMethodResult result = invokeMain("-pretty","-","-textFile","johnFile","John", "Meeting with THree", "07/11/2021", "12:00", "am","07/10/2021", "2:00","pm");
+    assertThat(result.getTextWrittenToStandardError(), containsString("The start time cannot be after the end time"));
+    assertThat(result.getTextWrittenToStandardOut(), emptyString());
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  @Test
+  void verifyThatTheOrderingAlgorithmIsWorking() {
+    MainMethodResult result = invokeMain("-pretty","-","-textFile","johnFile","John", "Meeting with THree", "07/10/2021", "12:00", "am","07/11/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
     assertThat(result.getTextWrittenToStandardOut(), containsString("John's app"));
     assertThat(result.getExitCode(), equalTo(0));
-    MainMethodResult result2 = invokeMain("-pretty","-","-textFile","johnFile","John", "Meeting with Elon", "07/10/2021", "12:00", "am","07/11/2021", "2:00","pm");
+    MainMethodResult result2 = invokeMain("-pretty","-","-textFile","johnFile","John", "Meeting with Four", "07/12/2021", "12:00", "am","07/13/2021", "2:00","pm");
     assertThat(result2.getTextWrittenToStandardError(), emptyString());
-    assertThat(result2.getTextWrittenToStandardOut(), containsString("***Hi****"));
+    assertThat(result2.getTextWrittenToStandardOut(), containsString("******"));
     assertThat(result2.getExitCode(), equalTo(0));
   }
 

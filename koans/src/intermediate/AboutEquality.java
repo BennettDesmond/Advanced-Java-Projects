@@ -52,10 +52,20 @@ public class AboutEquality {
             return true;
         }
 
+        public boolean equals(String str) {
+            // Change this implementation to match the equals contract
+            // Car objects with same horsepower and name values should be considered equal
+            // http://download.oracle.com/javase/6/docs/api/java/lang/Object.html#equals(java.lang.Object)
+            if(!this.name.equals(str)) {
+                return false;
+            }
+            return true;
+        }
+
         @Override
         public int hashCode() {
             // @see http://download.oracle.com/javase/6/docs/api/java/lang/Object.html#hashCode()
-            return super.hashCode();
+            return (int) 3 * horsepower;
         }
     }
 
@@ -126,8 +136,8 @@ public class AboutEquality {
         Chicken chicken1 = new Chicken();
         chicken1.color = "black";
         Chicken chicken2 = new Chicken();
-        assertEquals(chicken1.equals(chicken2), __);
-        assertEquals(chicken1.hashCode() == chicken2.hashCode(), __);
+        assertEquals(chicken1.equals(chicken2), false);
+        assertEquals(chicken1.hashCode() == chicken2.hashCode(), true);
         // Does this still fit the hashCode contract? Why (not)?
         // Fix the Chicken class to correct this.
     }

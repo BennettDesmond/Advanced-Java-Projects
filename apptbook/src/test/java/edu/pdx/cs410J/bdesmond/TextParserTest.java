@@ -31,27 +31,27 @@ public class TextParserTest {
     }
 
     @Test
-    void verifyThatTrueIsPassedWhenACorrectTimeIsPassedWithLeadingNumbers() {
+    void verifyThatNullIsPassedWhenAnIncorrectTimeIsPassedThatIsIn24HourTime() {
         TextParser parser = new TextParser();
-        assertThat(parser.validateTime("07/11/2021 14:39"), equalTo(true));
+        assertThat(parser.validateTime("07/11/2021 14:39"), equalTo(null));
     }
 
     @Test
-    void verifyThatTrueIsPassedWhenACorrectTimeIsPassedWithNoLeadingNumbers() {
+    void verifyThatNullIsPassedWhenAnIncorrectTimeIsPassedWithoutTheTimePeriod() {
         TextParser parser = new TextParser();
-        assertThat(parser.validateTime("7/11/2021 4:39"), equalTo(true));
+        assertThat(parser.validateTime("7/11/2021 4:39"), equalTo(null));
     }
 
     @Test
     void verifyThatTrueIsPassedWhenACorrectTimeIsPassedWithNoLeadingNumbersOnFirst() {
         TextParser parser = new TextParser();
-        assertThat(parser.validateTime("7/11/2021 14:39"), equalTo(true));
+        assertThat(parser.validateTime("7/11/2021 12:39 pm"), notNullValue());
     }
 
     @Test
-    void verifyThatTrueIsPassedWhenACorrectTimeIsPassedWithNoLeadingNumbersOnSecond() {
+    void verifyThatNullIsPassedWhenAnIncorrectTimeIsPassedWithoutTheTimePeriodPartButWithTwoDigitMonth() {
         TextParser parser = new TextParser();
-        assertThat(parser.validateTime("12/11/2021 4:39"), equalTo(true));
+        assertThat(parser.validateTime("12/11/2021 4:39"), equalTo(null));
     }
 
     @Test
@@ -61,15 +61,15 @@ public class TextParserTest {
     }
 
     @Test
-    void verifyThatFalseIsPassedWhenAnIncorrectDateIsPassedDay() {
+    void verifyThatNullIsPassedWhenAnIncorrectDateIsPassedDay() {
         TextParser parser = new TextParser();
-        assertThat(parser.validateTime("12/32/2021 12:39"), equalTo(false));
+        assertThat(parser.validateTime("12/32/2021 12:39 aM"), equalTo(null));
     }
 
     @Test
     void verifyThatFalseIsPassedWhenAnIncorrectDateIsPassedMonth() {
         TextParser parser = new TextParser();
-        assertThat(parser.validateTime("13/31/2021 12:39"), equalTo(false));
+        assertThat(parser.validateTime("13/31/2021 12:39 am"), equalTo(null));
     }
 
     //Write IT Tests once the dumper is implemented
