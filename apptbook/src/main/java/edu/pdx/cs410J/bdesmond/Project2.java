@@ -60,13 +60,13 @@ public class Project2 {
         fileName = arg;
         fileNameFlag = false;
         numOfOptions++;
-      } else if(arg == "-README") {
+      } else if(arg.equals("-README")) {
         readMe();
         numOfOptions++;
-      } else if(arg == "-print") {
+      } else if(arg.equals("-print")) {
         printFlag = true;
         numOfOptions++;
-      } else if(arg == "-textFile") {
+      } else if(arg.equals("-textFile")) {
         fileNameFlag = true;
         fileFlag = true;
         numOfOptions++;
@@ -105,13 +105,13 @@ public class Project2 {
         printErrorAndExit("The file cannot be parsed");
       }
       boolean nameComparison = name.equals(appBook.getOwnerName());
-      if(!nameComparison && (appBook.getOwnerName() != "")) {
+      if(!nameComparison && (!appBook.getOwnerName().equals(""))) {
         printErrorAndExit("The name on the file does not match the name passed through the command line");
       }
       appBook.addAppointment(appointment);
       try {
         TextDumper dumper = new TextDumper(fileName);
-        if(appBook.getOwnerName() == "") {
+        if(appBook.getOwnerName().equals("")) {
           dumper.dump(appointmentBook);
         } else {
           dumper.dump(appBook);
@@ -168,15 +168,20 @@ public class Project2 {
     if(name == null) {
       printErrorAndExit(USAGE_MESSAGE);
     } else if(description == null) {
-      printErrorAndExit(MISSING_DESCRIPTION);
+      //printErrorAndExit(MISSING_DESCRIPTION);
+      printErrorAndExit(USAGE_MESSAGE);
     } else if(startDate == null) {
-      printErrorAndExit(MISSING_BEGINDATE);
+      //printErrorAndExit(MISSING_BEGINDATE);
+      printErrorAndExit(USAGE_MESSAGE);
     } else if(startTime == null) {
-      printErrorAndExit(MISSING_BEGINTIME);
+      //printErrorAndExit(MISSING_BEGINTIME);
+      printErrorAndExit(USAGE_MESSAGE);
     } else if(endDate == null) {
-      printErrorAndExit(MISSING_ENDDATE);
+      //printErrorAndExit(MISSING_ENDDATE);
+      printErrorAndExit(USAGE_MESSAGE);
     } else if(endTime == null) {
-      printErrorAndExit(MISSING_ENDTIME);
+      //printErrorAndExit(MISSING_ENDTIME);
+      printErrorAndExit(USAGE_MESSAGE);
     }
     validateEventDates(startDate,startTime);
     validateEventDates(endDate,endTime);
@@ -191,14 +196,10 @@ public class Project2 {
    *        if the date is valid.
    */
   private static boolean validateDate(String date) {
-    DateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-    sdf.setLenient(false);
-    try {
-      sdf.parse(date);
-    } catch (ParseException e) {
-      return false;
-    }
-    return true;
+    String regex = "([0-9]|0[0-9]|1[0-2])/([0-9]|[0-2][0-9]|3[0-2])/([0-9][0-9]|[0-9][0-9][0-9][0-9])";
+    Pattern p = Pattern.compile(regex);
+    Matcher m = p.matcher(date);
+    return m.matches();
   }
 
   /**
