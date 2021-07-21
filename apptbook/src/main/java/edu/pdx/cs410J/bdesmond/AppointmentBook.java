@@ -77,6 +77,28 @@ public class AppointmentBook extends AbstractAppointmentBook {
      */
     @Override
     public void addAppointment(AbstractAppointment abstractAppointment) {
-        appointments.add((Appointment) abstractAppointment);
+        int size = appointments.size();
+        if(size == 0) {
+            appointments.add((Appointment) abstractAppointment);
+            return;
+        }
+        if(appointments.get(0).compareTo((Appointment) abstractAppointment) < 0) {
+            appointments.add((Appointment) abstractAppointment);
+            return;
+        }
+        if(size == 1) { //Add at beginning of LL with one listing
+            appointments.add(0,(Appointment) abstractAppointment);
+            return;
+        }
+        for(int i = 0; i < appointments.size(); i++) {
+            if((i+1) >= size) {
+                appointments.add((Appointment) abstractAppointment);
+                return;
+            }
+            if((appointments.get(i).compareTo((Appointment) abstractAppointment)==-1)&&(appointments.get(i).compareTo((Appointment) abstractAppointment)==1)) {
+                appointments.add((i+1),(Appointment) abstractAppointment);
+                return;
+            }
+        }
     }
 }

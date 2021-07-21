@@ -99,15 +99,12 @@ public class TextParser implements AppointmentBookParser{
         }
         start = validateTime(startString);
         end = validateTime(endString);
+        if(start.compareTo(end) != -1) {
+            return null;
+        }
         if(start == null || end == null) {
             return null;
         }
-        //if(!validateTime(start)) {
-            //return null;
-        //}
-        //if(!validateTime(end)) {
-            //return null;
-        //}
         Appointment app = new Appointment(start,end,description);
         return app;
     }

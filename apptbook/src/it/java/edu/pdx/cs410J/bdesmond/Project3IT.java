@@ -261,6 +261,23 @@ class Project3IT extends InvokeMainTestCase {
     assertThat(result.getExitCode(), equalTo(0));
   }
 
+  @Test
+  void testWithStartDateAfterEndDate() {
+    MainMethodResult result = invokeMain("-pretty","-","-textFile","johnFile","John", "Meeting with Casandra", "07/13/2021", "12:00", "am","07/14/2021", "2:00","pm");
+    assertThat(result.getTextWrittenToStandardError(), emptyString());
+    assertThat(result.getTextWrittenToStandardOut(), containsString("John's app"));
+    assertThat(result.getExitCode(), equalTo(0));
+    MainMethodResult result2 = invokeMain("-pretty","-","-textFile","johnFile","John", "Meeting with Elon", "07/10/2021", "12:00", "am","07/11/2021", "2:00","pm");
+    assertThat(result2.getTextWrittenToStandardError(), emptyString());
+    assertThat(result2.getTextWrittenToStandardOut(), containsString("***Hi****"));
+    assertThat(result2.getExitCode(), equalTo(0));
+  }
+
+  @Test
+  void testWithAddingTwoAppointmentsInNonChronologicalOrder() {
+
+  }
+
   private File copyResourceIntoFileInDirectory(File directory, String resourceName) throws IOException {
     File file = new File(directory, resourceName);
     InputStream resource = getClass().getResourceAsStream(resourceName);

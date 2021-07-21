@@ -121,6 +121,9 @@ public class Project3 {
     validateInput(name,description,startDate,startTime,startPeriod,endDate,endTime,endPeriod,fileNameTextFlag,fileNamePrettyFlag);
     begin = validateDate(startDate, startTime, startPeriod);
     end = validateDate(endDate, endTime, endPeriod);
+    if(begin.compareTo(end) != -1) {
+      printErrorAndExit("The start time cannot be after the end time");
+    }
     Appointment appointment = new Appointment(begin,end,description);
     AppointmentBook appointmentBook = new AppointmentBook(name);
     appointmentBook.addAppointment(appointment);
