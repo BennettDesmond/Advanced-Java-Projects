@@ -15,7 +15,12 @@ import java.util.regex.Pattern;
  * This class contains all of the command line parsing.
  */
 public class Project3 {
-  public static final String USAGE_MESSAGE = "usage: This is a command line program that needs an appointment book owner, and an appointment. An appointment needs a description and a start and end time.";
+  public static final String USAGE_MESSAGE = "usage: This is a command line program that needs an appointment book owner," +
+          "and an appointment. An appointment needs a description and a start and end time. This program also has options." +
+          "-pretty: prints the AppointmentBook to the file specified after the argument or to standard out if \"-\" is passed in." +
+          "-textFile: reads an AppointmentBook from a file and writes back to it. A file needs to be provided." +
+          "-print: prints a description of the new Appointment." +
+          "-README: This option prints the README for the project and exits";
   static final String MISSING_DESCRIPTION = "No description was given.";
   static final String MISSING_BEGINDATE = "No starting date was given.";
   static final String MISSING_BEGINTIME = "No starting time was given.";
@@ -232,19 +237,26 @@ public class Project3 {
     if(name.equals("")) {
       printErrorAndExit(USAGE_MESSAGE);
     } else if(description.equals("")) {
-      printErrorAndExit(MISSING_DESCRIPTION);
+      //printErrorAndExit(MISSING_DESCRIPTION);
+      printErrorAndExit(USAGE_MESSAGE);
     } else if(startDate.equals("")) {
-      printErrorAndExit(MISSING_BEGINDATE);
+      //printErrorAndExit(MISSING_BEGINDATE);
+      printErrorAndExit(USAGE_MESSAGE);
     } else if(startTime.equals("")) {
-      printErrorAndExit(MISSING_BEGINTIME);
+      //printErrorAndExit(MISSING_BEGINTIME);
+      printErrorAndExit(USAGE_MESSAGE);
     } else if(startPeriod.equals("")) {
-      printErrorAndExit(MISSING_STARTPERIOD);
+      //printErrorAndExit(MISSING_STARTPERIOD);
+      printErrorAndExit(USAGE_MESSAGE);
     } else if(endDate.equals("")) {
-      printErrorAndExit(MISSING_ENDDATE);
+      //printErrorAndExit(MISSING_ENDDATE);
+      printErrorAndExit(USAGE_MESSAGE);
     } else if(endTime.equals("")) {
-      printErrorAndExit(MISSING_ENDTIME);
+      //printErrorAndExit(MISSING_ENDTIME);
+      printErrorAndExit(USAGE_MESSAGE);
     } else if(endPeriod.equals("")) {
-      printErrorAndExit(MISSING_ENDPERIOD);
+      //printErrorAndExit(MISSING_ENDPERIOD);
+      printErrorAndExit(USAGE_MESSAGE);
     }
     //else if(fileNameTextFlag) {
       //printErrorAndExit("The file option was selected but a file was not provided");
@@ -344,14 +356,18 @@ public class Project3 {
    */
   private static void readMe() {
     System.out.println("Bennett Desmond\n");
-    System.out.println("Project 2\n");
+    System.out.println("Project 3\n");
     System.out.println("This program accepts parameters at the command line and makes" +
             "an appointment book and an appointment. This program only accepts one appointment" +
             "All parameters must be present for the project to run. The appointment book has" +
             "a name and an array of appointments, and the appointments have a description, a start time" +
             "and an end time. If the -textFile option is set and a file is provided" +
             ", then the appointment book is read from the file and the new appointment" +
-            "introduced on the command line is added to the file. \n");
+            "introduced on the command line is added to the file. There is also a -print" +
+            "option that will print out the Appointment that was passed to the program." +
+            "There is also a -pretty option that prints the AppointmentBook to a file when" +
+            "a file is provided and it prints the AppointmentBook to standard out when \"-\"" +
+            "is passed after the option.\n");
     System.exit(0);
   }
 

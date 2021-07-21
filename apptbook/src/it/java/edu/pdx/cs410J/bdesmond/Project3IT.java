@@ -52,36 +52,41 @@ class Project3IT extends InvokeMainTestCase {
   @Test
   void missingDescription() {
     MainMethodResult result = invokeMain("John");
-    String message = "No description was given.\n";
-    assertThat(result.getTextWrittenToStandardError(), equalTo(message));
+    //String message = "No description was given.\n";
+    String message = "usage";
+    assertThat(result.getTextWrittenToStandardError(), containsString(message));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void missingBeginDate() {
     MainMethodResult result = invokeMain("John","This is an event");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No starting date was given"));
+    //assertThat(result.getTextWrittenToStandardError(), containsString("No starting date was given"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void missingBeginTime() {
     MainMethodResult result = invokeMain("John","This is an event","02/13/2000");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No starting time was given"));
+    //assertThat(result.getTextWrittenToStandardError(), containsString("No starting time was given"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void missingEndDate() {
     MainMethodResult result = invokeMain("John","This is an event","02/13/2000","11:39");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No starting period was given."));
+    //assertThat(result.getTextWrittenToStandardError(), containsString("No starting period was given."));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void missingEndTime() {
     MainMethodResult result = invokeMain("John","This is an event","02/13/2000","10:39","03/13/2000");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No ending date was given"));
+    //assertThat(result.getTextWrittenToStandardError(), containsString("No ending date was given"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
@@ -126,7 +131,8 @@ class Project3IT extends InvokeMainTestCase {
   @Test
   void testProgramByTimeWithoutTimePeriod() {
     MainMethodResult result = invokeMain("-print","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","13:00");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No ending time was given"));
+    //assertThat(result.getTextWrittenToStandardError(), containsString("No ending time was given"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
   }
@@ -158,7 +164,8 @@ class Project3IT extends InvokeMainTestCase {
   @Test
   void testTheProgramWithTheFileOptionSetButMissingOneArgument() {
     MainMethodResult result = invokeMain("-textFile","book","John","Meeting with Bernice","07/15/2021","12:00","am","07/15/2021","1:00");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No ending period was given"));
+    //assertThat(result.getTextWrittenToStandardError(), containsString("No ending period was given"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
   }
@@ -174,7 +181,8 @@ class Project3IT extends InvokeMainTestCase {
   @Test
   void testWithTextFileOptionSelectedButWithoutAFileName() {
     MainMethodResult result = invokeMain("-textFile","John", "Meeting with Bernice", "07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No ending period"));
+    //assertThat(result.getTextWrittenToStandardError(), containsString("No ending period"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
   }
