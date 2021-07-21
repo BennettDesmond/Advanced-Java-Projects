@@ -268,7 +268,7 @@ class Project3IT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
   }
-
+  @Disabled
   @Test
   void verifyThatTheOrderingAlgorithmIsWorking() {
     MainMethodResult result = invokeMain("-pretty","-","-textFile","johnFile","John", "Meeting with THree", "07/10/2021", "12:00", "am","07/11/2021", "2:00","pm");
