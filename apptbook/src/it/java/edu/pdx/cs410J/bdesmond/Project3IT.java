@@ -245,7 +245,7 @@ class Project3IT extends InvokeMainTestCase {
 
     MainMethodResult result = invokeMain("-pretty",filePretty.getPath(),"-textFile",fileStor.getPath(), "John","Meeting with Matthew","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
-    assertThat(result.getTextWrittenToStandardOut(), containsString("John's appointment book with    "));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("John's appointment book with "));
     assertThat(result.getExitCode(), equalTo(0));
   }
 
@@ -255,15 +255,17 @@ class Project3IT extends InvokeMainTestCase {
 
     MainMethodResult result = invokeMain("-pretty","-","-textFile", fileStor.getPath(), "John","Meeting with Aruna","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
-    assertThat(result.getTextWrittenToStandardOut(), containsString("John's appointment book with  "));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("John's appointment book with "));
     assertThat(result.getTextWrittenToStandardOut(), containsString("******************************************\n" +
             "John's Appointment Book"));
     assertThat(result.getExitCode(), equalTo(0));
   }
 
   @Test
-  void testWithStartDateAfterEndDate() {
-    MainMethodResult result = invokeMain("-pretty","-","-textFile","johnFile","John", "Meeting with Casandra", "07/13/2021", "12:00", "am","07/14/2021", "2:00","pm");
+  void testWithStartDateAfterEndDate(@TempDir File tempDir) throws IOException {
+    File textFile = copyResourceIntoFileInDirectory(tempDir, "johnFile");
+
+    MainMethodResult result = invokeMain("-pretty","-","-textFile",textFile.getPath(),"John", "Meeting with Casandra", "07/13/2021", "12:00", "am","07/14/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
     assertThat(result.getTextWrittenToStandardOut(), containsString("John's app"));
     assertThat(result.getExitCode(), equalTo(0));

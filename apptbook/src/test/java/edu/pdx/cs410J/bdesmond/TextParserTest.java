@@ -45,7 +45,7 @@ public class TextParserTest {
     @Test
     void verifyThatTrueIsPassedWhenACorrectTimeIsPassedWithNoLeadingNumbersOnFirst() {
         TextParser parser = new TextParser();
-        assertThat(parser.validateTime("7/11/2021 14:39"), equalTo(true));
+        assertThat(parser.validateTime("7/11/2021 12:39 pm"), notNullValue());
     }
 
     @Test
