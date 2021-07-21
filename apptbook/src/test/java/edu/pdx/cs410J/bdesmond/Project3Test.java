@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.bdesmond;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -17,6 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 class Project3Test {
 
+  @Disabled
   @Test
   void readmeCanBeReadAsResource() throws IOException {
     try (
