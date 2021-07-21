@@ -68,6 +68,12 @@ public class TextParserTest {
         assertThat(parser.validateTime("13/31/2021 12:39"), equalTo(false));
     }
 
+    @Test
+    void verifyThatTheCorrectBehaviorHappensWhenTheDefaultConstructorIsCalled() {
+        TextParser parser = new TextParser();
+        assertThat(parser.fileVerification(), equalTo(false));
+    }
+
     //Write IT Tests once the dumper is implemented
 
 }
