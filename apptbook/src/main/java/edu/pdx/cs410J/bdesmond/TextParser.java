@@ -109,7 +109,7 @@ public class TextParser implements AppointmentBookParser{
      *          A boolean flag telling if the format is valid
      */
     public boolean validateTime(String time) {
-        String regex = "(0[0-9]|1[0-2]|[0-9])/([0-2][0-9]|3[01]?)/[0-9][0-9][0-9][0-9]\s([01]?[0-9]|2[0-3]|[0-9]):[0-5][0-9]";
+        String regex = "(0[0-9]|1[0-2]|[0-9])/([0-2][0-9]|3[01]?)/[0-9][0-9][0-9][0-9]\\s([01]?[0-9]|2[0-3]|[0-9]):[0-5][0-9]";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(time);
         return m.matches();
@@ -127,6 +127,9 @@ public class TextParser implements AppointmentBookParser{
             File file = new File(fileName);
             if(file.exists()) {
                 return true;
+            }
+            if(fileName.equals("")) {
+                return false;
             }
             file.createNewFile();
             return true;
