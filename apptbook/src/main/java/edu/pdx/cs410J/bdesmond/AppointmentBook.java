@@ -82,20 +82,20 @@ public class AppointmentBook extends AbstractAppointmentBook {
             appointments.add((Appointment) abstractAppointment);
             return;
         }
-        if(appointments.get(0).compareTo((Appointment) abstractAppointment) < 0) {
-            appointments.add((Appointment) abstractAppointment);
-            return;
-        }
-        if(size == 1) { //Add at beginning of LL with one listing
+        if(appointments.get(0).compareTo((Appointment) abstractAppointment) > 0) {
             appointments.add(0,(Appointment) abstractAppointment);
             return;
         }
+        if(size == 1) { //Add at end of LL with one listing
+            appointments.add((Appointment) abstractAppointment);
+            return;
+        }
         for(int i = 0; i < appointments.size(); i++) {
-            if((i+1) >= size) {
+            if((i+1) == size) {
                 appointments.add((Appointment) abstractAppointment);
                 return;
             }
-            if((appointments.get(i).compareTo((Appointment) abstractAppointment)==-1)&&(appointments.get(i).compareTo((Appointment) abstractAppointment)==1)) {
+            if((appointments.get(i).compareTo((Appointment) abstractAppointment)<=0)&&(appointments.get(i+1).compareTo((Appointment) abstractAppointment)>=0)) {
                 appointments.add((i+1),(Appointment) abstractAppointment);
                 return;
             }

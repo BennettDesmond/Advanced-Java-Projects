@@ -42,16 +42,15 @@ public class PrettyPrinterTest {
         File file = new File(tempDir, fileName);
         assertThat(file.createNewFile(), equalTo(true));
 
-        TextDumper dumper = new TextDumper(file.getPath());
-        AppointmentBook book = new AppointmentBook();
-        assertThat(dumper.fileVerification(), equalTo(true));
+        PrettyPrinter printer = new PrettyPrinter(file.getPath(),true);
+        assertThat(printer.fileVerification(), equalTo(true));
     }
 
     @Test
     void verifyThatTheWriterDoesntWriteToABadFileName() {
-        TextDumper dumper = new TextDumper();
+        PrettyPrinter printer = new PrettyPrinter();
         AppointmentBook book = new AppointmentBook();
-        assertThat(dumper.writeToFile(book), equalTo(false));
+        assertThat(printer.prettyPrintToFile(book), equalTo(false));
     }
 
     @Test
@@ -59,23 +58,22 @@ public class PrettyPrinterTest {
         String fileName = "name";
         File file = new File(tempDir, fileName);
 
-        TextDumper dumper = new TextDumper(file.getPath());
+        PrettyPrinter printer = new PrettyPrinter(file.getPath(),true);
         AppointmentBook book = createAppointmentBook();
-        assertThat(dumper.writeToFile(book), equalTo(true));
+        assertThat(printer.prettyPrintToFile(book), equalTo(true));
     }
 
     @Test
     void verifyThatIfPrinterIsPassedABadFileNameExceptionIsThrown() {
         PrettyPrinter printer = new PrettyPrinter();
         AppointmentBook book = new AppointmentBook();
-        assertThrows(IOException.class, () -> {printer.dump(book);});
+        assertDoesNotThrow(() -> {printer.dump(book);});
     }
 
     @Test
     void verifyThatIfDumpIsPassedABadFileNameExceptionIsThrown() {
         PrettyPrinter printer = new PrettyPrinter();
         AppointmentBook book = new AppointmentBook();
-        //assertDoesN(IOException.class, () -> {printer.dumpToStandardOut(book);});
         assertDoesNotThrow(() -> {printer.dump(book);});
     }
 
@@ -85,9 +83,9 @@ public class PrettyPrinterTest {
         File file = new File(tempDir, fileName);
         assertThat(file.createNewFile(), equalTo(true));
 
-        TextDumper dumper = new TextDumper(file.getPath());
+        PrettyPrinter printer = new PrettyPrinter(file.getPath(),true);
         AppointmentBook book = createAppointmentBook();
-        assertDoesNotThrow(() -> {dumper.dump(book);});
+        assertDoesNotThrow(() -> {printer.dump(book);});
     }
 
 
