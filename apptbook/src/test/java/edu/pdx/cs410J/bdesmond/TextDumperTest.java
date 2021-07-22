@@ -22,7 +22,7 @@ public class TextDumperTest {
 
     @Test
     void verifyCorrectConstructorWithParametersIsCalled(@TempDir File tempDir) throws IOException {
-        String fileName = "name";
+        String fileName = "name.txt";
         File file = new File(tempDir, fileName);
         assertThat(file.createNewFile(), equalTo(true));
 
@@ -40,7 +40,7 @@ public class TextDumperTest {
 
     @Test
     void verifyTheReturnValueFromACorrectFileWriterRun(@TempDir File tempDir) {
-        String fileName = "name";
+        String fileName = "name.txt";
         File file = new File(tempDir, fileName);
 
         TextDumper dumper = new TextDumper(file.getPath());
@@ -57,7 +57,7 @@ public class TextDumperTest {
 
     @Test
     void verifyThatNoExceptionsAreThrownWhenCorrectInformationIsPassed(@TempDir File tempDir) throws IOException {
-        String fileName = "name";
+        String fileName = "name.txt";
         File file = new File(tempDir, fileName);
         assertThat(file.createNewFile(), equalTo(true));
 

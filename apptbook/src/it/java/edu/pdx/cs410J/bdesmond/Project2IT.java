@@ -41,7 +41,7 @@ class Project2IT extends InvokeMainTestCase {
   void testWithAllCorrectValues() {
     MainMethodResult result = invokeMain("John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","13:00");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
-    String message = "John's appointment book with 1 appointments\n";
+    String message = "John's appointment book.txt with 1 appointments\n";
     assertThat(result.getTextWrittenToStandardOut(), equalTo(message));
     assertThat(result.getExitCode(), equalTo(0));
   }
@@ -115,7 +115,7 @@ class Project2IT extends InvokeMainTestCase {
   void testingDateFormatWithSingleDigitDay() {
     MainMethodResult result = invokeMain("John","Meeting with Bernice","7/15/2021","12:00","7/15/2021","13:00");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
-    String message = "John's appointment book with 1 appointments\n";
+    String message = "John's appointment book.txt with 1 appointments\n";
     assertThat(result.getTextWrittenToStandardOut(), equalTo(message));
     assertThat(result.getExitCode(), equalTo(0));
   }
@@ -146,7 +146,7 @@ class Project2IT extends InvokeMainTestCase {
 
   @Test
   void testTheProgramWithTheFileOptionSetButMissingOneArgument() {
-    MainMethodResult result = invokeMain("-textFile","book","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021");
+    MainMethodResult result = invokeMain("-textFile","book.txt","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021");
     //assertThat(result.getTextWrittenToStandardError(), containsString("No ending time"));
     assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
@@ -155,7 +155,7 @@ class Project2IT extends InvokeMainTestCase {
 
   @Test
   void testTooManyOptionsGivenWithTheTextFileOption() {
-    MainMethodResult result = invokeMain("-textFile","book","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","22:00","This is unnecessary");
+    MainMethodResult result = invokeMain("-textFile","book.txt","John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","22:00","This is unnecessary");
     assertThat(result.getTextWrittenToStandardError(), containsString("Too many arguments"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
@@ -172,7 +172,7 @@ class Project2IT extends InvokeMainTestCase {
 
   @Test
   void testProgramResponseWithThreeOptions(@TempDir File tempDir) throws IOException {
-    File file = copyResourceIntoFileInDirectory(tempDir, "book");
+    File file = copyResourceIntoFileInDirectory(tempDir, "book.txt");
 
     MainMethodResult result = invokeMain("-print","-README","-textFile", file.getPath(), "John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","13:00");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
@@ -182,7 +182,7 @@ class Project2IT extends InvokeMainTestCase {
 
   @Test
   void errorThrownBecauseOfBadDateFormatInFile(@TempDir File tempDir) throws IOException {
-    File file = copyResourceIntoFileInDirectory(tempDir, "badDateFormat");
+    File file = copyResourceIntoFileInDirectory(tempDir, "badDateFormat.txt");
 
     MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
     assertThat(result.getTextWrittenToStandardError(), containsString("There was a problem with reading"));
@@ -192,17 +192,17 @@ class Project2IT extends InvokeMainTestCase {
 
   @Test
   void errorThrownBecauseOfMissingAppointmentBookName(@TempDir File tempDir) throws IOException {
-    File file = copyResourceIntoFileInDirectory(tempDir, "missingNameInFile");
+    File file = copyResourceIntoFileInDirectory(tempDir, "missingNameInFile.txt");
 
     MainMethodResult result = invokeMain("-textFile", file.getPath(),"John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
-    assertThat(result.getTextWrittenToStandardError(), containsString("The name on the file does not match the name"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("The name.txt on the file does not match the name.txt"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void noErrorThrownWithMissingAppointment(@TempDir File tempDir) throws IOException {
-    File file = copyResourceIntoFileInDirectory(tempDir, "missingAppointmentOnFile");
+    File file = copyResourceIntoFileInDirectory(tempDir, "missingAppointmentOnFile.txt");
 
     MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
@@ -212,7 +212,7 @@ class Project2IT extends InvokeMainTestCase {
 
   @Test
   void goldenTestAddingToTheJohnFolder(@TempDir File tempDir) throws IOException {
-    File file = copyResourceIntoFileInDirectory(tempDir, "john");
+    File file = copyResourceIntoFileInDirectory(tempDir, "john.txt");
 
     MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
@@ -220,9 +220,9 @@ class Project2IT extends InvokeMainTestCase {
     assertThat(result.getExitCode(), equalTo(0));
   }
   @Test
-  @Disabled("The \"name\" file appears to parse successfully??")
+  @Disabled("The \"name.txt\" file appears to parse successfully??")
   void addAnAppointmentToAnAppointmentBook(@TempDir File tempDir) throws IOException {
-    File file = copyResourceIntoFileInDirectory(tempDir, "name");
+    File file = copyResourceIntoFileInDirectory(tempDir, "name.txt");
     MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
     assertThat(result.getTextWrittenToStandardError(), containsString("There was a problem with reading"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
