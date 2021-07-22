@@ -49,36 +49,41 @@ class Project1IT extends InvokeMainTestCase {
   @Test
   void missingDescription() {
     MainMethodResult result = invokeMain("John");
-    String message = "No description was given.\n";
-    assertThat(result.getTextWrittenToStandardError(), equalTo(message));
+    //String message = "No description was given.\n";
+    String message = "usage";
+    assertThat(result.getTextWrittenToStandardError(), containsString(message));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void missingBeginDate() {
     MainMethodResult result = invokeMain("John","This is an event");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No starting date was given"));
+    //assertThat(result.getTextWrittenToStandardError(), containsString("No starting date was given"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void missingBeginTime() {
     MainMethodResult result = invokeMain("John","This is an event","02/13/2000");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No starting time was given"));
+    //assertThat(result.getTextWrittenToStandardError(), containsString("No starting time was given"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void missingEndDate() {
     MainMethodResult result = invokeMain("John","This is an event","02/13/2000","14:39");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No ending date was given"));
+    //assertThat(result.getTextWrittenToStandardError(), containsString("No ending date was given"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   void missingEndTime() {
     MainMethodResult result = invokeMain("John","This is an event","02/13/2000","14:39","03/13/2000");
-    assertThat(result.getTextWrittenToStandardError(), containsString("No ending time was given"));
+    //assertThat(result.getTextWrittenToStandardError(), containsString("No ending time was given"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     assertThat(result.getExitCode(), equalTo(1));
   }
 
