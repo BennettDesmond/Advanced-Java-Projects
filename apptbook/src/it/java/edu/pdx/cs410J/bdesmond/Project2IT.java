@@ -41,7 +41,7 @@ class Project2IT extends InvokeMainTestCase {
   void testWithAllCorrectValues() {
     MainMethodResult result = invokeMain("John","Meeting with Bernice","07/15/2021","12:00","07/15/2021","13:00");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
-    String message = "John's appointment book.txt with 1 appointments\n";
+    String message = "John's appointment book with 1 appointments\n";
     assertThat(result.getTextWrittenToStandardOut(), equalTo(message));
     assertThat(result.getExitCode(), equalTo(0));
   }
@@ -115,7 +115,7 @@ class Project2IT extends InvokeMainTestCase {
   void testingDateFormatWithSingleDigitDay() {
     MainMethodResult result = invokeMain("John","Meeting with Bernice","7/15/2021","12:00","7/15/2021","13:00");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
-    String message = "John's appointment book.txt with 1 appointments\n";
+    String message = "John's appointment book with 1 appointments\n";
     assertThat(result.getTextWrittenToStandardOut(), equalTo(message));
     assertThat(result.getExitCode(), equalTo(0));
   }
@@ -195,7 +195,7 @@ class Project2IT extends InvokeMainTestCase {
     File file = copyResourceIntoFileInDirectory(tempDir, "missingNameInFile.txt");
 
     MainMethodResult result = invokeMain("-textFile", file.getPath(),"John","Meeting with Aruna","08/15/2021","23:00","09/15/2021","22:00");
-    assertThat(result.getTextWrittenToStandardError(), containsString("The name.txt on the file does not match the name.txt"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("The name on the file does not match the name"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
   }
