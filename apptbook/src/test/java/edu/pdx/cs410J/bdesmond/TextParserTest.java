@@ -23,7 +23,7 @@ public class TextParserTest {
 
     @Test
     void verifyThatNoExceptionIsThrownWhenEmptyFileIsPassed(@TempDir File tempDir) {
-        String fileName = "emptyFile";
+        String fileName = "emptyFile.txt";
         File file = new File(tempDir, fileName);
 
         TextParser parser = new TextParser(file.getPath());

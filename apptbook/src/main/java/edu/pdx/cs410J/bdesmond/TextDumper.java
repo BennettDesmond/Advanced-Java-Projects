@@ -44,7 +44,7 @@ public class TextDumper implements AppointmentBookDumper<AppointmentBook>{
      */
     @Override
     public void dump(AppointmentBook AppointmentBook) throws IOException{
-        if(!fileVerification()) {
+        if(!fileVerificationForDumper()) {
             throw new IOException("There was an error creating or opening your file.");
         }
         if(!writeToFile(AppointmentBook)) {
@@ -59,7 +59,7 @@ public class TextDumper implements AppointmentBookDumper<AppointmentBook>{
      *          This method returns a bool flag that tells if
      *          an IOException should be thrown
      */
-    public boolean fileVerification() {
+    public boolean fileVerificationForDumper() {
         File file = new File(fileName);
         if(file.exists()) {
             return true;

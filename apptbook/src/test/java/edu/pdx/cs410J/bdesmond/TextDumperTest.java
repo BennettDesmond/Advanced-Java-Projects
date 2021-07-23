@@ -32,18 +32,18 @@ public class TextDumperTest {
     @Test
     void verifyThatTheCorrectBehaviorHappensWhenTheDefaultConstructorIsCalled() {
         TextDumper dumper = new TextDumper();
-        assertThat(dumper.fileVerification(), equalTo(false));
+        assertThat(dumper.fileVerificationForDumper(), equalTo(false));
     }
 
     @Test
     void verifyCorrectConstructorWithParametersIsCalled(@TempDir File tempDir) throws IOException {
-        String fileName = "name";
+        String fileName = "name.txt";
         File file = new File(tempDir, fileName);
         assertThat(file.createNewFile(), equalTo(true));
 
         TextDumper dumper = new TextDumper(file.getPath());
         AppointmentBook book = new AppointmentBook();
-        assertThat(dumper.fileVerification(), equalTo(true));
+        assertThat(dumper.fileVerificationForDumper(), equalTo(true));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class TextDumperTest {
 
     @Test
     void verifyTheReturnValueFromACorrectFileWriterRun(@TempDir File tempDir) {
-        String fileName = "name";
+        String fileName = "name.txt";
         File file = new File(tempDir, fileName);
 
         TextDumper dumper = new TextDumper(file.getPath());
@@ -72,7 +72,7 @@ public class TextDumperTest {
 
     @Test
     void verifyThatNoExceptionsAreThrownWhenCorrectInformationIsPassed(@TempDir File tempDir) throws IOException {
-        String fileName = "name";
+        String fileName = "name.txt";
         File file = new File(tempDir, fileName);
         assertThat(file.createNewFile(), equalTo(true));
 

@@ -147,6 +147,9 @@ public class TextParser implements AppointmentBookParser{
             if(file.exists()) {
                 return true;
             }
+            if(fileName.equals("")) {
+                return false;
+            }
             file.createNewFile();
             return true;
         } catch (IOException e) {

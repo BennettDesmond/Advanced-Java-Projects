@@ -163,7 +163,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void testTheProgramWithTheFileOptionSetButMissingOneArgument() {
-    MainMethodResult result = invokeMain("-textFile","book","John","Meeting with Bernice","07/15/2021","12:00","am","07/15/2021","1:00");
+    MainMethodResult result = invokeMain("-textFile","book.txt","John","Meeting with Bernice","07/15/2021","12:00","am","07/15/2021","1:00");
     //assertThat(result.getTextWrittenToStandardError(), containsString("No ending period was given"));
     assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
@@ -172,7 +172,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void testTooManyOptionsGivenWithTheTextFileOption() {
-    MainMethodResult result = invokeMain("-textFile","book","John","Meeting with Bernice","07/15/2021","12:00","am","07/15/2021","22:00","pm","This is unnecessary");
+    MainMethodResult result = invokeMain("-textFile","book.txt","John","Meeting with Bernice","07/15/2021","12:00","am","07/15/2021","22:00","pm","This is unnecessary");
     assertThat(result.getTextWrittenToStandardError(), containsString("Too many arguments"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
@@ -189,7 +189,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void testProgramResponseWithThreeOptions(@TempDir File tempDir) throws IOException {
-    File file = copyResourceIntoFileInDirectory(tempDir, "book");
+    File file = copyResourceIntoFileInDirectory(tempDir, "book.txt");
 
     MainMethodResult result = invokeMain("-print","-README","-textFile", file.getPath(), "John","Meeting with Bernice","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
@@ -199,7 +199,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void errorThrownBecauseOfBadDateFormatInFile(@TempDir File tempDir) throws IOException {
-    File file = copyResourceIntoFileInDirectory(tempDir, "badDateFormat");
+    File file = copyResourceIntoFileInDirectory(tempDir, "badDateFormat.txt");
 
     MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), containsString("There was a problem with reading"));
@@ -209,7 +209,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void errorThrownBecauseOfMissingAppointmentBookName(@TempDir File tempDir) throws IOException {
-    File file = copyResourceIntoFileInDirectory(tempDir, "missingNameInFile");
+    File file = copyResourceIntoFileInDirectory(tempDir, "missingNameInFile.txt");
 
     MainMethodResult result = invokeMain("-textFile", file.getPath(),"John","Meeting with Aruna","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), containsString("The name on the file does not match the name"));
@@ -219,7 +219,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void noErrorThrownWithMissingAppointment(@TempDir File tempDir) throws IOException {
-    File file = copyResourceIntoFileInDirectory(tempDir, "missingAppointmentOnFile");
+    File file = copyResourceIntoFileInDirectory(tempDir, "missingAppointmentOnFile.txt");
 
     MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
@@ -229,7 +229,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void goldenTestAddingToTheJohnFolder(@TempDir File tempDir) throws IOException {
-    File file = copyResourceIntoFileInDirectory(tempDir, "john");
+    File file = copyResourceIntoFileInDirectory(tempDir, "john.txt");
 
     MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
@@ -237,9 +237,9 @@ class Project3IT extends InvokeMainTestCase {
     assertThat(result.getExitCode(), equalTo(0));
   }
   @Test
-  @Disabled("The \"name\" file appears to parse successfully??")
+  @Disabled("The \"name.txt\" file appears to parse successfully??")
   void addAnAppointmentToAnAppointmentBook(@TempDir File tempDir) throws IOException {
-    File file = copyResourceIntoFileInDirectory(tempDir, "name");
+    File file = copyResourceIntoFileInDirectory(tempDir, "name.txt");
     MainMethodResult result = invokeMain("-textFile", file.getPath(), "John","Meeting with Aruna","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), containsString("There was a problem with reading"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
@@ -248,8 +248,8 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void correctRunWithPrettyPrintSelectedAndAFileGiven(@TempDir File tempDir) throws IOException {
-    File fileStor = copyResourceIntoFileInDirectory(tempDir, "john");
-    File filePretty = copyResourceIntoFileInDirectory(tempDir, "prettyFile");
+    File fileStor = copyResourceIntoFileInDirectory(tempDir, "john.txt");
+    File filePretty = copyResourceIntoFileInDirectory(tempDir, "prettyFile.txt");
 
     MainMethodResult result = invokeMain("-pretty",filePretty.getPath(),"-textFile",fileStor.getPath(), "John","Meeting with Matthew","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
@@ -259,7 +259,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void correctRunWithPrettyPrintSelectedAndNoFileGiven(@TempDir File tempDir) throws IOException {
-    File fileStor = copyResourceIntoFileInDirectory(tempDir, "john");
+    File fileStor = copyResourceIntoFileInDirectory(tempDir, "john.txt");
 
     MainMethodResult result = invokeMain("-pretty","-","-textFile", fileStor.getPath(), "John","Meeting with Aruna","07/15/2021", "12:00", "am","07/15/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
@@ -271,7 +271,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void testWithStartDateAfterEndDate() {
-    MainMethodResult result = invokeMain("-pretty","-","-textFile","johnFile","John", "Meeting with THree", "07/11/2021", "12:00", "am","07/10/2021", "2:00","pm");
+    MainMethodResult result = invokeMain("-pretty","-","-textFile","johnFile.txt","John", "Meeting with THree", "07/11/2021", "12:00", "am","07/10/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), containsString("The start time cannot be after the end time"));
     assertThat(result.getTextWrittenToStandardOut(), emptyString());
     assertThat(result.getExitCode(), equalTo(1));
@@ -279,11 +279,11 @@ class Project3IT extends InvokeMainTestCase {
   @Disabled
   @Test
   void verifyThatTheOrderingAlgorithmIsWorking() {
-    MainMethodResult result = invokeMain("-pretty","-","-textFile","johnFile","John", "Meeting with THree", "07/10/2021", "12:00", "am","07/11/2021", "2:00","pm");
+    MainMethodResult result = invokeMain("-pretty","-","-textFile","johnFile.txt","John", "Meeting with THree", "07/10/2021", "12:00", "am","07/11/2021", "2:00","pm");
     assertThat(result.getTextWrittenToStandardError(), emptyString());
     assertThat(result.getTextWrittenToStandardOut(), containsString("John's app"));
     assertThat(result.getExitCode(), equalTo(0));
-    MainMethodResult result2 = invokeMain("-pretty","-","-textFile","johnFile","John", "Meeting with Four", "07/12/2021", "12:00", "am","07/13/2021", "2:00","pm");
+    MainMethodResult result2 = invokeMain("-pretty","-","-textFile","johnFile.txt","John", "Meeting with Four", "07/12/2021", "12:00", "am","07/13/2021", "2:00","pm");
     assertThat(result2.getTextWrittenToStandardError(), emptyString());
     assertThat(result2.getTextWrittenToStandardOut(), containsString("******"));
     assertThat(result2.getExitCode(), equalTo(0));

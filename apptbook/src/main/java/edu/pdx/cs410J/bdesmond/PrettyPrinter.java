@@ -63,6 +63,9 @@ public class PrettyPrinter implements AppointmentBookDumper<AppointmentBook>{
             if(file.exists()) {
                 return true;
             }
+            if(fileName.equals("")) {
+                return false;
+            }
             file.createNewFile();
             return true;
         } catch (IOException e) {

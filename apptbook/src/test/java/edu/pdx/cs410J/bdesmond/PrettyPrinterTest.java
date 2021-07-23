@@ -38,7 +38,7 @@ public class PrettyPrinterTest {
 
     @Test
     void verifyCorrectConstructorWithParametersIsCalled(@TempDir File tempDir) throws IOException {
-        String fileName = "name";
+        String fileName = "name.txt";
         File file = new File(tempDir, fileName);
         assertThat(file.createNewFile(), equalTo(true));
 
@@ -55,7 +55,7 @@ public class PrettyPrinterTest {
 
     @Test
     void verifyTheReturnValueFromACorrectFileWriterRun(@TempDir File tempDir) {
-        String fileName = "name";
+        String fileName = "name.txt";
         File file = new File(tempDir, fileName);
 
         PrettyPrinter printer = new PrettyPrinter(file.getPath(),true);
@@ -79,7 +79,7 @@ public class PrettyPrinterTest {
 
     @Test
     void verifyThatNoExceptionsAreThrownWhenCorrectInformationIsPassed(@TempDir File tempDir) throws IOException {
-        String fileName = "name";
+        String fileName = "name.txt";
         File file = new File(tempDir, fileName);
         assertThat(file.createNewFile(), equalTo(true));
 
