@@ -13,20 +13,42 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class is an implementation of the AppointmentBookDumper. This
+ * class has one job, print an AppointmentBook beautifully to some outside entity.
+ */
 public class PrettyPrinter implements AppointmentBookDumper<AppointmentBook>{
     private String fileName;
     boolean printToFile;
 
+    /**
+     * This is the default constructor for the PrettyPrinter class
+     */
     public PrettyPrinter() {
         fileName = "";
         printToFile = false;
     }
 
+    /**
+     * This is the constructor with parameters for the PrettyPrinter class
+     * @param fileName
+     *       This is the name of the file to be printed to
+     * @param printToFile
+     *       This is a flag telling the printer to either print to a file or standard out
+     */
     public PrettyPrinter(String fileName, boolean printToFile) {
         this.fileName = fileName;
         this.printToFile = printToFile;
     }
 
+    /**
+     * This method dumps the AppointmentBook to the specified output source.
+     * This method calls helper methods to do the main work.
+     * @param appBook
+     *       This is the AppointmentBook to pretty print
+     * @throws IOException
+     *        In certain cases, this method can through an IOException
+     */
     @Override
     public void dump(AppointmentBook appBook) throws IOException{
         if(printToFile) {
@@ -41,6 +63,11 @@ public class PrettyPrinter implements AppointmentBookDumper<AppointmentBook>{
         }
     }
 
+    /**
+     * This is the main code to write the AppointmentBook to standard out
+     * @param appBook
+     *       This is the AppointmentBook that is printed
+     */
     public static void  dumpToStandardOut(AppointmentBook appBook) {
         LinkedList appointments = (LinkedList) appBook.getAppointments();
         System.out.println("***************************************************************************");
@@ -57,6 +84,13 @@ public class PrettyPrinter implements AppointmentBookDumper<AppointmentBook>{
         }
     }
 
+    /**
+     * This method is tasked with the job of checking if a file
+     * exists, and creating one if it doesn't exist.
+     * @return
+     *        This method returns true if a file is ready to go,
+     *        and false if not
+     */
     public boolean fileVerification() {
         try {
             File file = new File(fileName);
@@ -73,6 +107,13 @@ public class PrettyPrinter implements AppointmentBookDumper<AppointmentBook>{
         }
     }
 
+    /**
+     * This is the method that prints the AppointmentBook to a file
+     * @param appBook
+     *       This is the AppointmentBook to be printed
+     * @return
+     *        A boolean flag is returned to tell if an exception should be thrown or not
+     */
     public boolean prettyPrintToFile(AppointmentBook appBook) {
         try {
             FileWriter printer = new FileWriter(fileName);
@@ -98,6 +139,17 @@ public class PrettyPrinter implements AppointmentBookDumper<AppointmentBook>{
         }
     }
 
+    /**
+     * This method takes to dates in string form and it finds the difference in time.
+     * It returns a string that tells how many years, days, hours, and minutes are
+     * between the dates. If any of these values are zero, it doesnt mention that label.
+     * @param start_date
+     *        This is the first date for the event
+     * @param end_date
+     *        This is the second date for the event
+     * @return
+     *        This is the string returned that tells the difference in the time with the labels
+     */
     static private String findDifference(String start_date, String end_date) {
         StringBuilder returnString = new StringBuilder();
         DateFormat format = new SimpleDateFormat("MM/dd/yy hh:mm a");

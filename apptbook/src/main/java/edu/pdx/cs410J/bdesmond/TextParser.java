@@ -23,10 +23,18 @@ import java.util.regex.Pattern;
 public class TextParser implements AppointmentBookParser{
     private String fileName;
 
+    /**
+     * This is the default constructor for the TextParser class
+     */
     public TextParser() {
         fileName = "";
     }
 
+    /**
+     * This is the constructor with parameters for the TextParser class
+     * @param fileName
+     *        The name of the file to initiate the class values
+     */
     public TextParser(String fileName) {
         this.fileName = fileName;
     }

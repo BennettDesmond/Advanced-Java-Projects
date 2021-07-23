@@ -61,10 +61,20 @@ public class Appointment extends AbstractAppointment implements Comparable<Appoi
     return DateFormat.getDateInstance(DateFormat.SHORT).format(endTime) + " " + DateFormat.getTimeInstance(DateFormat.SHORT).format(endTime);
   }
 
+  /**
+   * This function returns the beginning date in the Date format
+   * @return
+   *        The begin date Date object
+   */
   public Date getBeginTime() {
     return beginTime;
   }
 
+  /**
+   * This is the getter for the end time
+   * @return
+   *        The end time in a Date object
+   */
   public Date getEndTime() {
     return endTime;
   }
@@ -79,6 +89,14 @@ public class Appointment extends AbstractAppointment implements Comparable<Appoi
     return description;
   }
 
+  /**
+   * This is the overriden function from the comparable class. This
+   * method defines the way two Appointment objects are compared.
+   * @param app
+   *        This method is passed an Appointment object to be compared to the callers object
+   * @return
+   *        An int value representing how the Appointments compare
+   */
   @Override
   public int compareTo(Appointment app) {
     Date begin1 = this.getBeginTime();

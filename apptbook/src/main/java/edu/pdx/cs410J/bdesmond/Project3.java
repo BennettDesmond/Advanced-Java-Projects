@@ -141,6 +141,15 @@ public class Project3 {
     System.exit(0);
   }
 
+  /**
+   * This is the call to the pretty printer
+   * @param fileNamePretty
+   *       This is the file name to print to
+   * @param prettyFlag
+   *       This specifies where to print
+   * @param appBook
+   *       This is what gets printed
+   */
   private static void prettyPrinter(String fileNamePretty, boolean prettyFlag, AppointmentBook appBook) {
     if(prettyFlag) {
       if(fileNamePretty.equals("-")) {
@@ -161,6 +170,17 @@ public class Project3 {
     }
   }
 
+  /**
+   * This method checks for the -print flag and prints according to its existence
+   * @param printFlag
+   *       This is the flag telling what to print
+   * @param fileFlag
+   *       This tells if a file was printed to
+   * @param appointmentBook
+   *       This AppointmentBook contains just the one new entry
+   * @param appBook
+   *       This AppointmentBook contains all the appointments from the file and from the command line
+   */
   private static void printAppointmentOrAppointmentBookInfo(boolean printFlag,boolean fileFlag,AppointmentBook appointmentBook, AppointmentBook appBook) {
     if(printFlag) {
       System.out.println(appointmentBook.getAppointments());
@@ -173,6 +193,23 @@ public class Project3 {
     }
   }
 
+  /**
+   * This method calls parse and dump for the main program
+   * @param name
+   *       This is the name of the AppointmentBook owner
+   * @param fileName
+   *       This is the name of the file to be handled
+   * @param fileFlag
+   *       This flag specifies if file parsing and dumping  is necessary
+   * @param appointment
+   *        This is the new Appointment from the command line
+   * @param appointmentBook
+   *        This is an AppointmentBook with the command line Appointment
+   * @param appBook
+   *        This is the AppointmentBook with all the appointments
+   * @return
+   *        This method returns the full AppointmentBook
+   */
   private static AppointmentBook parseFileAndDump(String name, String fileName, boolean fileFlag, Appointment appointment, AppointmentBook appointmentBook, AppointmentBook appBook) {
     if(fileFlag) {
       try {
@@ -265,6 +302,17 @@ public class Project3 {
     //}
   }
 
+  /**
+   * This method makes sure that the entire date can be parsed into a Date object
+   * @param date
+   *        This is the date to be checked
+   * @param time
+   *        This is the time to be checked
+   * @param period
+   *        This is the time period to be checked
+   * @return
+   *        This is the Date object that the date has been converted into
+   */
   private static Date validateDate(String date, String time, String period) {
     String dateString = date + " " + time + " " + period;
     Date dateClassObj = new Date();
@@ -316,6 +364,13 @@ public class Project3 {
   }
   */
 
+  /**
+   * This method makes sure that the passed in times are in valid 12-hour format
+   * @param time
+   *        This is the time to be checked
+   * @return
+   *        A boolean flag is returned telling if the time is valid or not
+   */
   private static boolean validate12HourTime(String time) {
     String regex1 = "(0[0-9]|[0-9]|1[0-2]):[0-5][0-9]";
     String regex2 = "(0[0-9]|[0-9]|1[0-9]|2[0-4]):[0-5][0-9]";
