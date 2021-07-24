@@ -23,28 +23,21 @@
 </h1>
 
 <h2>
-    These forms let you interact with the simple word/definition REST API that
+    These forms let you interact with the simple owner/appointment REST API that
     is created by the project archetype.
 </h2>
 
-
 <div>
     <form method="get" action="appointments">
-        List all word/definition pairs <input type="submit" definition="Submit"/>
-    </form>
-</div>
-
-<div>
-    <form method="get" action="appointments">
-        List definition for word <input name="word" type="text" size="10" title="word"/>
+        Text for appointment book owned by <input name="owner" type="text" size="10" title="word"/>
         <input type="submit" definition="Submit"/>
     </form>
 </div>
 
 <div>
     <form method="post" action="appointments">
-        Create a new word/definition pair <input name="word" type="text" size="10" title="word"/> /
-        <input name="definition" type="text" size="10" title="definition"/>
+        Create a new appointment for owner <input name="owner" type="text" size="10" title="owner"/> with description
+        <input name="description" type="text" size="100" title="description"/>
         <input type="submit" definition="Submit"/>
     </form>
 </div>
