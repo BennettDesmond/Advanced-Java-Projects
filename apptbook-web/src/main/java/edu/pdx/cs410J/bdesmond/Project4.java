@@ -13,37 +13,68 @@ import java.util.Map;
 public class Project4 {
 
     public static final String MISSING_ARGS = "Missing command line arguments";
+    public static final String TOO_MANY_ARGS = "Too many command line arguments were provided for the option that it looks like you want";
 
     public static void main(String... args) {
-        String hostName = null;
-        String portString = null;
-        String word = null;
-        String definition = null;
+        //AppointmentBook Variables
+        String owner = "";
+        String description = "";
+        String start = "";
+        String end = "";
+        //Options Variables
+        String hostName = "";
+        String portString = "";
+        boolean searchFlag = false;
+        boolean printFlag = false;
+        String definition = ""; //TODO REPLACE
 
-        for (String arg : args) {
-            if (hostName == null) {
-                hostName = arg;
-
-            } else if ( portString == null) {
-                portString = arg;
-
-            } else if (word == null) {
-                word = arg;
-
-            } else if (definition == null) {
-                definition = arg;
-
-            } else {
-                usage("Extraneous command line argument: " + arg);
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-README")) {
+                readMe();
+            } else if (args[i].equals("-host")) {
+                if((i+1) < args.length) {
+                    hostName = args[++i];
+                }
+            } else if (args[i].equals("-port")) {
+                if((i+1) < args.length) {
+                    portString = args[++i];
+                }
+            } else if (args[i].equals("-search")) {
+                if(args.length < 12) {
+                    usage(MISSING_ARGS);
+                } else if(args.length > 12) {
+                    usage(TOO_MANY_ARGS);
+                }
+                searchFlag = true;
+            } else if (args[i].equals("-print")) {
+                if(args.length < 13) {
+                    usage(MISSING_ARGS);
+                } else if(args.length > 13) {
+                    usage(TOO_MANY_ARGS);
+                }
+                printFlag = true;
+            } else if (owner.equals("")) {
+                owner = args[i];
+            } else if (description.equals("")) {
+                description = args[i];
+            } else if (start.equals("")) {
+                if((i+2) < args.length) {
+                    start = args[i] + " " + args[++i] + " " + args[++i];
+                }
+            } else if (end.equals("")) {
+                if((i+2) < args.length) {
+                    start = args[i] + " " + args[++i] + " " + args[++i];
+                }
             }
         }
 
         if (hostName == null) {
             usage( MISSING_ARGS );
-
         } else if ( portString == null) {
             usage( "Missing port" );
         }
+
+        //
 
         int port;
         try {
@@ -58,21 +89,29 @@ public class Project4 {
 
         String message;
         try {
-            if (word == null) {
-                // Print all word/definition pairs
-                Map<String, String> dictionary = client.getAllDictionaryEntries();
-                StringWriter sw = new StringWriter();
-                Messages.formatDictionaryEntries(new PrintWriter(sw, true), dictionary);
-                message = sw.toString();
+            if(searchFlag) {
+                //TODO Search for Appointments that fall within the range
+            } else if (printFlag) {
+                //TODO Print the added appointment to the screen and add appointment
+            } else if (description.equals("") && !owner.equals("")) {
 
-            } else if (definition == null) {
+                //TODO print all appointments for the specified owner
+
                 // Print all dictionary entries
-                message = Messages.formatDictionaryEntry(word, client.getAppointments(word));
+                //message = Messages.formatDictionaryEntry(owner, client.getAppointments(owner));
 
+            } else if (args.length == 12){
+                //TODO add an appointment to the book
             } else {
+                if(args.length < 5) {
+                    usage(MISSING_ARGS);
+                } else {
+                    usage(TOO_MANY_ARGS);
+                }
+
                 // Post the word/definition pair
-                client.createAppointment(word, definition);
-                message = Messages.definedWordAs(word, definition);
+                //client.createAppointment(owner, definition);
+                //message = Messages.definedWordAs(owner, definition);
             }
 
         } catch ( IOException ex ) {
@@ -105,7 +144,7 @@ public class Project4 {
         err.println("usage: java Project4 host port [word] [definition]");
         err.println("  host         Host of web server");
         err.println("  port         Port of web server");
-        err.println("  word         Word in dictionary");
+        err.println("  owner        Owner in dictionary");
         err.println("  definition   Definition of word");
         err.println();
         err.println("This simple program posts words and their definitions");
@@ -116,5 +155,22 @@ public class Project4 {
         err.println();
 
         System.exit(1);
+    }
+
+    private static void readMe() {
+        System.out.println("Bennett Desmond\n");
+        System.out.println("Project 4\n");
+        System.out.println("This program accepts parameters at the command line and makes" +
+                "an appointment book and an appointment. This program only accepts one appointment" +
+                "All parameters must be present for the project to run. The appointment book has" +
+                "a name and an array of appointments, and the appointments have a description, a start time" +
+                "and an end time. If the -textFile option is set and a file is provided" +
+                ", then the appointment book is read from the file and the new appointment" +
+                "introduced on the command line is added to the file. There is also a -print" +
+                "option that will print out the Appointment that was passed to the program." +
+                "There is also a -pretty option that prints the AppointmentBook to a file when" +
+                "a file is provided and it prints the AppointmentBook to standard out when \"-\"" +
+                "is passed after the option.\n");
+        System.exit(0);
     }
 }
