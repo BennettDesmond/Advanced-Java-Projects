@@ -1,12 +1,19 @@
 package edu.pdx.cs410J.bdesmond;
 
 import edu.pdx.cs410J.ParserException;
+import edu.pdx.cs410J.web.HttpRequestHelper;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The main class that parses the command line and communicates with the
@@ -28,7 +35,6 @@ public class Project4 {
         String portString = "";
         boolean searchFlag = false;
         boolean printFlag = false;
-        String definition = ""; //TODO REPLACE
 
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-README")) {
@@ -80,8 +86,6 @@ public class Project4 {
             usage( "Missing port" );
         }
 
-        //TODO Make sure that the date format is correct
-
         int port;
         try {
             port = Integer.parseInt( portString );
@@ -96,19 +100,41 @@ public class Project4 {
         String message = "";
         try {
             if(searchFlag) { //Search for appointments in the range
-                TextParser parser = new TextParser(client.getAppointmentsBetweenTimes(owner,start,end));
+                AppointmentBook app = null;
+                if(!dateCheck(start, end)) {
+                    error("The date is in the wrong format");
+                }
+                String retVal = "";
+                try {
+                    retVal = client.getAppointmentsBetweenTimes(owner,start,end);
+                } catch(HttpRequestHelper.RestException e) {
+                    error("The person you are trying to search for does not exist in the server");
+                }
+                TextParser parser = new TextParser(retVal);
                 PrettyPrinter printer = new PrettyPrinter();
                 try {
+                    app = parser.parse();
                     printer.dump(parser.parse());
                 } catch(IOException | ParserException e) {
                     error("There was a problem parsing information from the server");
                 }
-                //TODO Deal with the case where there are no matches
+                if(app.getAppointments().size() == 0) {
+                    message = "There are no appointments that are within this range";
+                }
             } else if (printFlag) { //Print the added appointment to the screen and add appointment
+                if(!dateCheck(start, end)) {
+                    error("The date is in the wrong format");
+                }
                 client.createAppointment(owner,description,start,end);
                 message = "The new appointment added has the following description: " + description;
             } else if (description.equals("") && !owner.equals("")) { //Print all appointments for the specified owner
-                TextParser parser = new TextParser(client.getAppointments(owner));
+                String retVal = "";
+                try {
+                    retVal = client.getAppointments(owner);
+                } catch(HttpRequestHelper.RestException e) {
+                    error("The person you are trying to find appointments for does not exist in the server");
+                }
+                TextParser parser = new TextParser(retVal);
                 PrettyPrinter printer = new PrettyPrinter();
                 try {
                     printer.dump(parser.parse());
@@ -116,6 +142,9 @@ public class Project4 {
                     error("There was a problem parsing information from the server");
                 }
             } else if (args.length == 12){ //Add an appointment to an appointment book
+                if(!dateCheck(start, end)) {
+                    error("The date is in the wrong format");
+                }
                 client.createAppointment(owner,description,start,end);
             } else {
                 if(args.length < 5) {
@@ -143,6 +172,54 @@ public class Project4 {
         err.println("** " + message);
 
         System.exit(1);
+    }
+
+    private static boolean dateCheck(String start, String end) {
+        if(!validateDate(start)) {
+            return false;
+        }
+        if(!validate12HourTime(start)) {
+            return false;
+        }
+        if(!validateDate(end)) {
+            return false;
+        }
+        if(!validate12HourTime(end)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * This method makes sure that the entire date can be parsed into a Date object
+     * @param dateString
+     *        This is the date to be checked
+     * @return
+     *        This is the Date object that the date has been converted into
+     */
+    private static boolean validateDate(String dateString) {
+        Date dateClassObj = new Date();
+        DateFormat format = new SimpleDateFormat("MM/dd/yy hh:mm a");
+        try {
+            dateClassObj = format.parse(dateString);
+        } catch(ParseException e) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * This method makes sure that the passed in times are in valid 12-hour format
+     * @param time
+     *        This is the time to be checked
+     * @return
+     *        A boolean flag is returned telling if the time is valid or not
+     */
+    private static boolean validate12HourTime(String time) {
+        String regex1 = "(.*)\\s(0[0-9]|[0-9]|1[0-2]):[0-5][0-9]\\s(.*)";
+        Pattern p1 = Pattern.compile(regex1);
+        Matcher m1 = p1.matcher(time);
+        return m1.matches();
     }
 
     /**

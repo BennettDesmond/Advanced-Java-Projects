@@ -76,11 +76,12 @@ class Project4IT extends InvokeMainTestCase {
 
     @Test
     void test4BasicTestWithAddingAnAppointment() {
-        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"John","This is an event in December","12/23/21","8:30","am","12/24/21","8:30","pm");
+        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"John","This is an event in December","12/23/21","12:30","am","12/24/21","8:30","pm");
         assertThat(result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardError(), containsString(""));
         result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"John");
-        assertThat(result.getExitCode(), equalTo(0));
+        //assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), containsString(""));
         assertThat(result.getTextWrittenToStandardOut(), containsString("This is an event in December"));
     }
 
@@ -102,14 +103,14 @@ class Project4IT extends InvokeMainTestCase {
         assertThat(result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardOut(), containsString("This is an event in March"));
     }
-/*
+
     @Test
     void test7TestTheSearchMethodWithNoEventsInRange() {
-        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"-search","John","3/1/21","1:00","am","3/25/21","11:59","pm");
+        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"-search","John","3/1/20","1:00","am","3/25/20","11:59","pm");
         assertThat(result.getExitCode(), equalTo(0));
-        assertThat(result.getTextWrittenToStandardOut(), containsString("This is an event in March"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("There are no appointments that are within this range"));
     }
- */
+
     @Test
     void test8VerifyThatThePrintFunctionBehavesAsExpected() {
         MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"-print","John","Descriptions are the best and they are rarely read","2/1/21","1:00","am","2/25/21","11:59","pm");
@@ -149,8 +150,37 @@ class Project4IT extends InvokeMainTestCase {
 
     //TODO BELOW
     //TOO Many arguments
+    @Test
+    void test11PassTooManyArguments() {
+        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"-search","John","3/1/21","1:00","am","3/25/21","11:59","pm","this is a value");
+        assertThat(result.getExitCode(), equalTo(1));
+        assertThat(result.getTextWrittenToStandardError(), containsString("Too"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString(""));
+    }
 
     //Wrong time format
+    @Test
+    void test12PassingTheWrongDateFormat() {
+        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"-search","John","78/1/21","25:00","am","3/25/21","3:59","pm");
+        assertThat(result.getExitCode(), equalTo(1));
+        assertThat(result.getTextWrittenToStandardError(), containsString("The date is in the wrong format"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString(""));
+    }
 
     //Try accessing all appointments for person that does not exist
+    @Test
+    void test13AccessAllAppointmentsForNonExistentPerson() {
+        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"Wolfgang");
+        assertThat(result.getExitCode(), equalTo(1));
+        assertThat(result.getTextWrittenToStandardError(), containsString("The person you are trying to"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString(""));
+    }
+
+    @Test
+    void test14AccessAllAppointmentsForNonExistentPerson() {
+        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"-search","Amadeus","3/1/21","11:00","am","3/25/21","3:59","pm");
+        assertThat(result.getExitCode(), equalTo(1));
+        assertThat(result.getTextWrittenToStandardError(), containsString("The person you are trying to search for does not exist in the server"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString(""));
+    }
 }
