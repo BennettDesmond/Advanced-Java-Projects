@@ -1,5 +1,7 @@
 package edu.pdx.cs410J.bdesmond;
 
+import edu.pdx.cs410J.ParserException;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -65,7 +67,7 @@ public class Project4 {
                 }
             } else if (end.equals("")) {
                 if((i+2) < args.length) {
-                    start = args[i] + " " + args[++i] + " " + args[++i];
+                    end = args[i] + " " + args[++i] + " " + args[++i];
                 } else {
                     usage("The end date is missing an element");
                 }
@@ -94,25 +96,33 @@ public class Project4 {
         String message = "";
         try {
             if(searchFlag) { //Search for appointments in the range
-                //TODO Search for Appointments that fall within the range
+                TextParser parser = new TextParser(client.getAppointmentsBetweenTimes(owner,start,end));
+                PrettyPrinter printer = new PrettyPrinter();
+                try {
+                    printer.dump(parser.parse());
+                } catch(IOException | ParserException e) {
+                    error("There was a problem parsing information from the server");
+                }
+                //TODO Deal with the case where there are no matches
             } else if (printFlag) { //Print the added appointment to the screen and add appointment
-                //TODO Print the added appointment to the screen and add appointment
+                client.createAppointment(owner,description,start,end);
+                message = "The new appointment added has the following description: " + description;
             } else if (description.equals("") && !owner.equals("")) { //Print all appointments for the specified owner
-                //message = Messages.for
-                //TODO print all appointments for the specified owner
-
-                // Print all dictionary entries
-                message = Messages.formatDictionaryEntry(owner, client.getAppointments(owner));
-
+                TextParser parser = new TextParser(client.getAppointments(owner));
+                PrettyPrinter printer = new PrettyPrinter();
+                try {
+                    printer.dump(parser.parse());
+                } catch(IOException | ParserException e) {
+                    error("There was a problem parsing information from the server");
+                }
             } else if (args.length == 12){ //Add an appointment to an appointment book
-                //TODO add an appointment to the book
+                client.createAppointment(owner,description,start,end);
             } else {
                 if(args.length < 5) {
                     usage(MISSING_ARGS);
                 } else {
                     usage(TOO_MANY_ARGS);
                 }
-
                 // Post the word/definition pair
                 //client.createAppointment(owner, definition);
                 //message = Messages.definedWordAs(owner, definition);
@@ -124,7 +134,6 @@ public class Project4 {
         }
 
         System.out.println(message);
-
         System.exit(0);
     }
 

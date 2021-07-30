@@ -3,9 +3,11 @@ package edu.pdx.cs410J.bdesmond;
 import edu.pdx.cs410J.InvokeMainTestCase;
 import edu.pdx.cs410J.UncaughtExceptionInMain;
 import edu.pdx.cs410J.web.HttpRequestHelper.RestException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer.MethodName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.testng.reporters.jq.Main;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -49,9 +51,10 @@ class Project4IT extends InvokeMainTestCase {
     void test3MissingDescriptionShouldFail() {
         MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"John","12/23/21","8:30","am","12/24/21","8:30","pm");
         assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-        assertThat(result.getTextWrittenToStandardError(), equalTo("dsfag"));
+        assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     }
 
+    @Disabled
     @Test
     void test4AddDefinition() {
         String word = "WORD";
@@ -70,4 +73,84 @@ class Project4IT extends InvokeMainTestCase {
         out = result.getTextWrittenToStandardOut();
         assertThat(out, out, containsString(Messages.formatDictionaryEntry(word, definition)));
     }
+
+    @Test
+    void test4BasicTestWithAddingAnAppointment() {
+        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"John","This is an event in December","12/23/21","8:30","am","12/24/21","8:30","pm");
+        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), containsString(""));
+        result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"John");
+        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("This is an event in December"));
+    }
+
+    @Test
+    void test5AddTwoMoreAppointmentsAndMakeSureNothingDisappears() {
+        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"John","This is an event in January","1/23/21","8:30","am","1/24/21","8:30","pm");
+        result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"John","This is an event in March","3/23/21","8:30","am","3/24/21","8:30","pm");
+        result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"John");
+        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("This is an event in December"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("This is an event in January"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("This is an event in March"));
+    }
+
+    @Test
+    void test6VerifyTheSearchFunction() {
+        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"-search","John","3/1/21","1:00","am","3/25/21","11:59","pm");
+        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("This is an event in March"));
+    }
+/*
+    @Test
+    void test7TestTheSearchMethodWithNoEventsInRange() {
+        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"-search","John","3/1/21","1:00","am","3/25/21","11:59","pm");
+        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("This is an event in March"));
+    }
+ */
+    @Test
+    void test8VerifyThatThePrintFunctionBehavesAsExpected() {
+        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"-print","John","Descriptions are the best and they are rarely read","2/1/21","1:00","am","2/25/21","11:59","pm");
+        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Descriptions are the best and they are rarely read"));
+        result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"John");
+        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Descriptions are the best and they are rarely read"));
+    }
+
+    @Test
+    void test9TestTheREADME() {
+        MainMethodResult result = invokeMain(Project4.class,"-README","-host",HOSTNAME,"-port",PORT,"-search","John","3/1/21","1:00","am","3/25/21","11:59","pm");
+        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Bennett Desmond"));
+    }
+
+    @Test
+    void test10AddASecondAppointmentBookAndVerifyThatBothExistSimultaneously() {
+        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"Billy","This is an event in August for Billy","8/1/21","8:00","am","8/25/21","11:59","pm");
+        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"Billy");
+        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("This is an event in August for Billy"));
+        result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"John","This is an event in August for John","8/1/21","8:00","am","8/25/21","11:59","pm");
+        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"John");
+        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("This is an event in August for John"));
+    }
+
+    //TODO BELOW
+    //TOO Many arguments
+
+    //Wrong time format
+
+    //Try accessing all appointments for person that does not exist
 }
