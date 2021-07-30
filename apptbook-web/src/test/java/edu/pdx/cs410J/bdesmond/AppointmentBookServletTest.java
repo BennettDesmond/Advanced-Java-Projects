@@ -9,7 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,6 +26,17 @@ import static org.mockito.Mockito.*;
  */
 public class AppointmentBookServletTest {
 
+  static private Date setupDateObject(String date) {
+    Date dateClassObj = new Date();
+    DateFormat format = new SimpleDateFormat("MM/dd/yy hh:mm a");
+    try {
+      dateClassObj = format.parse(date);
+    } catch (ParseException e) {
+      //System.err.println(e);
+    }
+    return dateClassObj;
+  }
+
   @Test
   void gettingAppointmentBookReturnsTextFormat() throws ServletException, IOException {
     String owner = "John";
@@ -29,7 +44,7 @@ public class AppointmentBookServletTest {
 
     AppointmentBookServlet servlet = new AppointmentBookServlet();
     AppointmentBook book = servlet.createAppointmentBook(owner);
-    book.addAppointment(new Appointment(description));
+    book.addAppointment(new Appointment(setupDateObject("12/23/20 9:30 am"),setupDateObject("12/23/20 9:30 pm"),description));
 
     Map<String,String> queryParams = Map.of("owner",owner);
     StringWriter sw = invokeServletMethod(queryParams,servlet::doGet);
@@ -60,8 +75,10 @@ public class AppointmentBookServletTest {
 
     String owner = "John";
     String description = "Teach Java";
+    String start = "12/23/20 9:30 am";
+    String end = "12/23/20 9:30 pm";
 
-    invokeServletMethod(Map.of("owner",owner,"description",description), servlet::doPost);
+    invokeServletMethod(Map.of("owner",owner,"description",description,"start",start,"end",end), servlet::doPost);
 
     AppointmentBook book = servlet.getAppointmentBook(owner);
     assertThat(book, notNullValue());
