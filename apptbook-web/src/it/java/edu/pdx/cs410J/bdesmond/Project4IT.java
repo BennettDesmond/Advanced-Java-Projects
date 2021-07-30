@@ -27,35 +27,29 @@ class Project4IT extends InvokeMainTestCase {
     @Test
     void test0RemoveAllMappings() throws IOException {
       AppointmentBookRestClient client = new AppointmentBookRestClient(HOSTNAME, Integer.parseInt(PORT));
-      client.removeAllDictionaryEntries();
+      client.removeAllAppointmentBooks();
     }
 
     @Test
     void test1NoCommandLineArguments() {
-        MainMethodResult result = invokeMain( Project4.class );
+        MainMethodResult result = invokeMain(Project4.class);
         assertThat(result.getExitCode(), equalTo(1));
         assertThat(result.getTextWrittenToStandardError(), containsString(Project4.MISSING_ARGS));
     }
 
     @Test
     void test2EmptyServer() {
-        MainMethodResult result = invokeMain( Project4.class, HOSTNAME, PORT );
-        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
+        MainMethodResult result = invokeMain(Project4.class, "-host",HOSTNAME,"-port",PORT );
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(1));
         String out = result.getTextWrittenToStandardOut();
-        assertThat(out, out, containsString(Messages.formatWordCount(0)));
+        assertThat(out, out, containsString(""));
     }
 
     @Test
-    void test3NoDefinitionsThrowsAppointmentBookRestException() {
-        String word = "WORD";
-        try {
-            invokeMain(Project4.class, HOSTNAME, PORT, word);
-            fail("Expected a RestException to be thrown");
-
-        } catch (UncaughtExceptionInMain ex) {
-            RestException cause = (RestException) ex.getCause();
-            assertThat(cause.getHttpStatusCode(), equalTo(HttpURLConnection.HTTP_NOT_FOUND));
-        }
+    void test3MissingDescriptionShouldFail() {
+        MainMethodResult result = invokeMain(Project4.class,"-host",HOSTNAME,"-port",PORT,"John","12/23/21","8:30","am","12/24/21","8:30","pm");
+        assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardError(), equalTo("dsfag"));
     }
 
     @Test

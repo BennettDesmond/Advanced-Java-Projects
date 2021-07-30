@@ -55,26 +55,30 @@ public class Project4 {
                 printFlag = true;
             } else if (owner.equals("")) {
                 owner = args[i];
-            } else if (description.equals("")) {
+            } else if (description.equals("") && !searchFlag) {
                 description = args[i];
             } else if (start.equals("")) {
                 if((i+2) < args.length) {
                     start = args[i] + " " + args[++i] + " " + args[++i];
+                } else {
+                    usage("The start date is missing an element");
                 }
             } else if (end.equals("")) {
                 if((i+2) < args.length) {
                     start = args[i] + " " + args[++i] + " " + args[++i];
+                } else {
+                    usage("The end date is missing an element");
                 }
             }
         }
 
-        if (hostName == null) {
+        if (hostName.equals("")) {
             usage( MISSING_ARGS );
-        } else if ( portString == null) {
+        } else if ( portString.equals("")) {
             usage( "Missing port" );
         }
 
-        //
+        //TODO Make sure that the date format is correct
 
         int port;
         try {
@@ -87,20 +91,20 @@ public class Project4 {
 
         AppointmentBookRestClient client = new AppointmentBookRestClient(hostName, port);
 
-        String message;
+        String message = "";
         try {
-            if(searchFlag) {
+            if(searchFlag) { //Search for appointments in the range
                 //TODO Search for Appointments that fall within the range
-            } else if (printFlag) {
+            } else if (printFlag) { //Print the added appointment to the screen and add appointment
                 //TODO Print the added appointment to the screen and add appointment
-            } else if (description.equals("") && !owner.equals("")) {
-
+            } else if (description.equals("") && !owner.equals("")) { //Print all appointments for the specified owner
+                //message = Messages.for
                 //TODO print all appointments for the specified owner
 
                 // Print all dictionary entries
-                //message = Messages.formatDictionaryEntry(owner, client.getAppointments(owner));
+                message = Messages.formatDictionaryEntry(owner, client.getAppointments(owner));
 
-            } else if (args.length == 12){
+            } else if (args.length == 12){ //Add an appointment to an appointment book
                 //TODO add an appointment to the book
             } else {
                 if(args.length < 5) {
@@ -141,17 +145,26 @@ public class Project4 {
         PrintStream err = System.err;
         err.println("** " + message);
         err.println();
-        err.println("usage: java Project4 host port [word] [definition]");
-        err.println("  host         Host of web server");
-        err.println("  port         Port of web server");
-        err.println("  owner        Owner in dictionary");
-        err.println("  definition   Definition of word");
+        err.println("usage: java edu.pdx.cs410J.<login-id>.Project4 [options] <args>");
+        err.println("args are (in this order):");
+        err.println("  owner            The person who owns the appt book");
+        err.println("  description      A description of the appointment");
+        err.println("  begin            When the appt begins");
+        err.println("  end              When the appt ends");
+        err.println("options are (options may appear in any order):");
+        err.println("  -host hostname   Host computer on which the server runs");
+        err.println("  -port port       Port on which the server is listening");
+        err.println("  -search          Appointments should be searched for");
+        err.println("  -print           Prints a description of the new appointment");
+        err.println("  -README          Prints a README for this project and exits");
         err.println();
-        err.println("This simple program posts words and their definitions");
-        err.println("to the server.");
-        err.println("If no definition is specified, then the word's definition");
-        err.println("is printed.");
-        err.println("If no word is specified, all dictionary entries are printed");
+        err.println("This is a simple appointment book program that stores multiple");
+        err.println("appointment books on a server.");
+        err.println("Other than the main options mentioned above, there are two main other options.");
+        err.println("(1) If you want all the appointments for a particular owner printer out to the ");
+        err.println("console, simply run the program with the host, port, and the owners name.");
+        err.println("(2) In order to add an appointment to an existing or new appointment book;");
+        err.println(" simply run the program with the host, the port, and all the args.");
         err.println();
 
         System.exit(1);
@@ -160,17 +173,11 @@ public class Project4 {
     private static void readMe() {
         System.out.println("Bennett Desmond\n");
         System.out.println("Project 4\n");
-        System.out.println("This program accepts parameters at the command line and makes" +
-                "an appointment book and an appointment. This program only accepts one appointment" +
-                "All parameters must be present for the project to run. The appointment book has" +
-                "a name and an array of appointments, and the appointments have a description, a start time" +
-                "and an end time. If the -textFile option is set and a file is provided" +
-                ", then the appointment book is read from the file and the new appointment" +
-                "introduced on the command line is added to the file. There is also a -print" +
-                "option that will print out the Appointment that was passed to the program." +
-                "There is also a -pretty option that prints the AppointmentBook to a file when" +
-                "a file is provided and it prints the AppointmentBook to standard out when \"-\"" +
-                "is passed after the option.\n");
+        System.out.println("This program is an appointment book program. New appointments" +
+                "can be added to existing appointment books, and new appointment books can" +
+                "be created. The appointments can be queried and all the appointments for " +
+                "a specified owner can be listed. This program needs to be passed the port and the" +
+                "host in order to connect to the website that hold the data.\n");
         System.exit(0);
     }
 }

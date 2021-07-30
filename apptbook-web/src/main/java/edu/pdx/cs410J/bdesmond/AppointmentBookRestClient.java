@@ -47,8 +47,14 @@ public class AppointmentBookRestClient extends HttpRequestHelper {
     return response.getContent();
   }
 
-  public void createAppointment(String owner, String description) throws IOException {
-    Response response = postToMyURL(Map.of("owner", owner, "description", description));
+  public String getAppointmentsBetweenTimes(String owner, String start, String end) throws IOException {
+    Response response = get(this.url, Map.of("owner",owner,"start",start,"end",end));
+    throwExceptionIfNotOkayHttpStatus(response);
+    return response.getContent();
+  }
+
+  public void createAppointment(String owner, String description, String start, String end) throws IOException {
+    Response response = postToMyURL(Map.of("owner", owner, "description", description, "start", start, "end", end));
     throwExceptionIfNotOkayHttpStatus(response);
   }
 
@@ -57,7 +63,7 @@ public class AppointmentBookRestClient extends HttpRequestHelper {
     return post(this.url, appointmentInfo);
   }
 
-  public void removeAllDictionaryEntries() throws IOException {
+  public void removeAllAppointmentBooks() throws IOException {
     Response response = delete(this.url, Map.of());
     throwExceptionIfNotOkayHttpStatus(response);
   }

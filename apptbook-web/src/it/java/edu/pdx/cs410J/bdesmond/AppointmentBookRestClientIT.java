@@ -7,6 +7,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,9 +31,9 @@ class AppointmentBookRestClientIT {
   }
 
   @Test
-  void test0RemoveAllDictionaryEntries() throws IOException {
+  void test0RemoveAllAppointmentBooks() throws IOException {
     AppointmentBookRestClient client = newAppointmentBookRestClient();
-    client.removeAllDictionaryEntries();
+    client.removeAllAppointmentBooks();
   }
 
   /*
@@ -45,12 +49,16 @@ class AppointmentBookRestClientIT {
   void test2CreateAppointmentBookWithOneAppointment() throws IOException {
     AppointmentBookRestClient client = newAppointmentBookRestClient();
     String owner = "John";
-    String description = "Learn Java";
-    client.createAppointment(owner, description);
+    String description = "Meet with Matt";
+    String start = "3/20/21 6:28 PM";
+    String end = "3/21/21 6:30 PM";
+    client.createAppointment(owner, description, start, end);
 
     String appointmentBookText = client.getAppointments(owner);
     assertThat(appointmentBookText, containsString(owner));
     assertThat(appointmentBookText, containsString(description));
+    assertThat(appointmentBookText, containsString(start));
+    assertThat(appointmentBookText, containsString(end));
   }
 
   @Test
@@ -59,6 +67,23 @@ class AppointmentBookRestClientIT {
     HttpRequestHelper.Response response = client.postToMyURL(Map.of());
     assertThat(response.getContent(), containsString("Precondition Failed"));
     assertThat(response.getCode(), equalTo(HttpURLConnection.HTTP_PRECON_FAILED));
+  }
+
+  @Test
+  void test5GetAppointmentsBetweenBeginAndEndTime() throws IOException {
+    AppointmentBookRestClient client = newAppointmentBookRestClient();
+    client.createAppointment("John", "Meet with Viju", "1/20/21 6:28 PM", "1/21/21 6:30 PM");
+    client.createAppointment("John", "Meet with Aruna", "5/20/21 6:28 PM", "5/21/21 6:30 PM");
+
+    String owner = "John";
+    String start = "3/11/21 6:28 PM";
+    String end = "4/13/21 6:30 PM";
+    String appointmentBookText = client.getAppointmentsBetweenTimes(owner, start, end);
+
+    assertThat(appointmentBookText, containsString("John"));
+    assertThat(appointmentBookText, containsString("Meet with Matt"));
+    assertThat(appointmentBookText, containsString("3/20/21 6:28 PM"));
+    assertThat(appointmentBookText, containsString("3/21/21 6:30 PM"));
   }
 
 }

@@ -8,6 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +25,8 @@ public class AppointmentBookServlet extends HttpServlet
 {
     static final String OWNER_PARAMETER = "owner";
     static final String DESCRIPTION_PARAMETER = "description";
+    static final String START_PARAMETER = "start";
+    static final String END_PARAMETER = "end";
 
     private final Map<String, AppointmentBook> books = new HashMap<>();
 
@@ -36,8 +42,23 @@ public class AppointmentBookServlet extends HttpServlet
         response.setContentType( "text/plain" );
 
         String owner = getParameter(OWNER_PARAMETER, request);
+        String start = getParameter(START_PARAMETER, request);
+        String end = getParameter(END_PARAMETER, request);
+
         if (owner == null) {
             missingRequiredParameter(response, OWNER_PARAMETER);
+            return;
+        }
+        if((start != null) && (end != null)) {
+            Date startDate = setupDateObject(start);
+            Date endDate = setupDateObject(end);
+            if(startDate == null) {
+                response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "The start date is not in the correct format");
+            }
+            if(endDate == null) {
+                response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "The end date is not in the correct format");
+            }
+            writeSpecifiedAppointments(owner, startDate, endDate, response);
         } else {
             writeAppointmentBook(owner, response);
         }
@@ -58,10 +79,19 @@ public class AppointmentBookServlet extends HttpServlet
             missingRequiredParameter(response, OWNER_PARAMETER);
             return;
         }
-
         String description = getParameter(DESCRIPTION_PARAMETER, request );
         if ( description == null) {
             missingRequiredParameter( response, DESCRIPTION_PARAMETER );
+            return;
+        }
+        String start = getParameter(START_PARAMETER, request );
+        if ( start == null) {
+            missingRequiredParameter( response, START_PARAMETER );
+            return;
+        }
+        String end = getParameter(END_PARAMETER, request );
+        if ( end == null) {
+            missingRequiredParameter( response, END_PARAMETER );
             return;
         }
 
@@ -69,7 +99,15 @@ public class AppointmentBookServlet extends HttpServlet
         if(book == null) {
             book = createAppointmentBook(owner);
         }
-        Appointment appointment = new Appointment(description);
+        Date startDate = setupDateObject(start);
+        Date endDate = setupDateObject(end);
+        if(startDate == null) {
+            response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "The start date is not in the correct format");
+        }
+        if(endDate == null) {
+            response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "The end date is not in the correct format");
+        }
+        Appointment appointment = new Appointment(startDate,endDate,description);
         book.addAppointment(appointment);
 
         /*
@@ -124,12 +162,34 @@ public class AppointmentBookServlet extends HttpServlet
 
         if (book == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-
         } else {
             PrintWriter pw = response.getWriter();
             TextDumper dumper = new TextDumper(pw);
             dumper.dump(book);
             //pw.println(Messages.formatDictionaryEntry(owner, book));
+
+            pw.flush();
+
+            response.setStatus(HttpServletResponse.SC_OK);
+        }
+    }
+
+    private void writeSpecifiedAppointments(String owner, Date start, Date end, HttpServletResponse response) throws IOException {
+        AppointmentBook book = this.books.get(owner);
+        AppointmentBook tempBook = new AppointmentBook(owner);
+
+        if (book == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } else {
+            PrintWriter pw = response.getWriter();
+            TextDumper dumper = new TextDumper(pw);
+            for (Appointment app : book.getAppointments()) {
+                if((app.getBeginTime().compareTo(start) > 0) && (app.getBeginTime().compareTo(end) < 0)) {
+                    //dumper.dumpAppointment(app);
+                    tempBook.addAppointment(app);
+                }
+            }
+            dumper.dump(tempBook);
 
             pw.flush();
 
@@ -169,6 +229,17 @@ public class AppointmentBookServlet extends HttpServlet
       }
     }
 
+    private Date setupDateObject(String date) {
+        Date dateClassObj = new Date();
+        DateFormat format = new SimpleDateFormat("MM/dd/yy hh:mm a");
+        try {
+            dateClassObj = format.parse(date);
+        } catch (ParseException e) {
+            return null;
+        }
+        return dateClassObj;
+    }
+
     //@VisibleForTesting
     //String getDefinition(String word) {
         //return this.dictionary.get(word);
@@ -181,7 +252,7 @@ public class AppointmentBookServlet extends HttpServlet
 
     public AppointmentBook createAppointmentBook(String owner) {
         AppointmentBook book = new AppointmentBook(owner);
-        this.books.put(owner, book); //TODO I do not think I need this line since I have a constructor
+        this.books.put(owner, book);
         return book;
     }
 }
