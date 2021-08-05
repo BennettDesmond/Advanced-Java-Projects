@@ -9,4 +9,10 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="title_activity_add">AddActivity</string>
+    <string name="add_create">Add/Create</string>
+    <string name="display">Display</string>
+    <string name="search">Search</string>
+    <string name="welcome">Welcome to\n the\n Appointment Book</string>
+    <string name="helpDescription">This button Pulls up a help menu</string>
 </resources>
