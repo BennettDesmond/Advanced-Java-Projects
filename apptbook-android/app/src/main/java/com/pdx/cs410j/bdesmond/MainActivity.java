@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         launchDisplayPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddActivity.class);
+                Intent intent = new Intent(MainActivity.this, DisplayActivity.class);
                 //startActivityForResult(intent, GET_SUM_FROM_CALCULATOR);
             }
         });
@@ -71,8 +71,9 @@ public class MainActivity extends AppCompatActivity {
         launchSearchPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddActivity.class);
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
                 //startActivityForResult(intent, GET_SUM_FROM_CALCULATOR);
+                startActivity(intent);
             }
         });
 
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         launchHelpPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddActivity.class);
+                Intent intent = new Intent(MainActivity.this, HelpActivity.class);
                 //startActivityForResult(intent, GET_SUM_FROM_CALCULATOR);
             }
         });

@@ -15,4 +15,8 @@
     <string name="search">Search</string>
     <string name="welcome">Welcome to\n the\n Appointment Book</string>
     <string name="helpDescription">This button Pulls up a help menu</string>
+    <string name="stockDate">JAN 01 2020</string>
+    <string name="stockTime">11:59 PM</string>
+    <string name="startTime">Start Time</string>
+    <string name="start">Start:</string>
 </resources>
