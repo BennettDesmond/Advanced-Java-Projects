@@ -5,10 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -26,11 +28,32 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         initDatePicker();
-        dateButton = findViewById(R.id.datePickerButton);
+        dateButton = findViewById(R.id.startDatePickerButton);
         dateButton.setText(getTodaysDate());
 
-        timeButton = findViewById(R.id.timePickerButton);
+        timeButton = findViewById(R.id.startTimePickerButton);
 
+        Button searchAppointmentBook = findViewById(R.id.localSearchButton);
+        searchAppointmentBook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO Add implementation to search through the specified Appointment Book
+
+                //Intent intent = new Intent(SearchActivity.this, AddActivity.class);
+                //startActivity(intent);
+                //startActivityForResult(intent, GET_SUM_FROM_CALCULATOR);
+            }
+        });
+
+        ImageButton launchMainPage = findViewById(R.id.backButton);
+        launchMainPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SearchActivity.this, MainActivity.class);
+                startActivity(intent);
+                //startActivityForResult(intent, GET_SUM_FROM_CALCULATOR);
+            }
+        });
     }
     private String getTodaysDate() {
         Calendar cal = Calendar.getInstance();

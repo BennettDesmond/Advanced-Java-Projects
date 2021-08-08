@@ -19,4 +19,13 @@
     <string name="stockTime">11:59 PM</string>
     <string name="startTime">Start Time</string>
     <string name="start">Start:</string>
+    <string name="end">End:</string>
+    <string name="to">To:</string>
+    <string name="from">From:</string>
+    <string name="backbutton">backButton</string>
+    <string name="name">Name:</string>
+    <string name="add_create_appointment">Add/Create Appointment</string>
+    <string name="search_appointments">Search Appointments</string>
+    <string name="display_appointments">Display Appointments</string>
+    <string name="description">Description:</string>
 </resources>

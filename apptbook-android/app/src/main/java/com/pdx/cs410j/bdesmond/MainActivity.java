@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddActivity.class);
                 //startActivityForResult(intent, GET_SUM_FROM_CALCULATOR);
+                startActivity(intent);
             }
         });
 
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, DisplayActivity.class);
                 //startActivityForResult(intent, GET_SUM_FROM_CALCULATOR);
+                startActivity(intent);
             }
         });
 
