@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppointmentBook">
         <activity
+            android:name=".AddActivity"
+            android:exported="true" />
+        <activity
             android:name=".HelpActivity"
             android:exported="true" />
         <activity
@@ -18,11 +21,6 @@
         <activity
             android:name=".DisplayActivity"
             android:exported="true" />
-        <activity
-            android:name=".AddActivity"
-            android:exported="true"
-            android:label="@string/title_activity_add"
-            android:theme="@style/Theme.AppointmentBook.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, HelpActivity.class);
-                //startActivityForResult(intent, GET_SUM_FROM_CALCULATOR);
+                startActivity(intent);
             }
         });
 
