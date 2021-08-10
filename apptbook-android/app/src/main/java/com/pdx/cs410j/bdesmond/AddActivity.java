@@ -16,8 +16,25 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import org.w3c.dom.Text;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+
+import edu.pdx.cs410J.ParserException;
 
 public class AddActivity extends AppCompatActivity {
 
@@ -209,12 +226,117 @@ public class AddActivity extends AppCompatActivity {
         nameText.setText("");
         descriptionText.setText("");
 
+        Date start = convertStringToDate(startDate+" "+startTime);
+        Date end = convertStringToDate(endDate+" "+endTime);
+        if ((start == null)||(end == null))
+            printTextField.setText("ERROR: The Date is formatted incorrectly");
+        Appointment newApp = new Appointment(start,end,description);
+        parseFileAndDump(name,newApp);
+
         if(printResults) {
-            printTextField.setText("Added: "+name+"'s "+description+" from "+startDate+" "+startTime+" to "+endDate+" "+endTime);
+            printTextField.setText(newApp.toString());
         }
     }
 
     public void printUpdate(View view) {
         printResults = ((CheckBox) view).isChecked();
+    }
+
+    private Date convertStringToDate(String dateString) {
+        Date dateClassObj = new Date();
+        DateFormat format = new SimpleDateFormat("MMM dd yyyy hh:mm a");
+        try {
+            dateClassObj = format.parse(dateString);
+        } catch(ParseException e) {
+            return null;
+        }
+        return dateClassObj;
+    }
+
+    private void parseFileAndDump(String name, Appointment appointment) {
+        AppointmentBook appBook;
+
+        File contextDirectory = getApplicationContext().getDataDir();
+        File file = new File(contextDirectory, (name+".txt"));
+        if (file.exists()) {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                if(!br.ready()) {
+                    appBook = new AppointmentBook(name);
+                } else {
+                    TextParser parser = new TextParser(br);
+                    appBook = parser.parse();
+                }
+            } catch (IOException | ParserException e) {
+                appBook = new AppointmentBook(name);
+            }
+        } else {
+            appBook = new AppointmentBook(name);
+        }
+
+        /*
+        File file = new File(AddActivity.this.getFilesDir()+name+".txt");
+        try {
+            TextParser parser = new TextParser(new BufferedReader(new FileReader(file)));
+            appBook = parser.parse();
+        } catch (ParserException | FileNotFoundException e) {
+            //printTextField.setText("ERROR: There was a problem reading from the database");
+            //return;
+            appBook = new AppointmentBook(name);
+        }
+
+         */
+
+
+        /*
+        try {
+            TextParser parser = new TextParser(name);
+            appBook = parser.parse();
+        } catch (ParserException e) {
+            printTextField.setText("ERROR: There was a problem reading from the database");
+            return;
+        }
+
+         */
+        boolean nameComparison = name.equals(appBook.getOwnerName());
+        if(!nameComparison && (!appBook.getOwnerName().equals(""))) {
+            printTextField.setText("ERROR: There is a database issue with "+name+"'s Appointment Book");
+            return;
+        }
+
+        appBook.addAppointment(appointment);
+
+        //File contextDirectory = getApplicationContext().getDataDir();
+        //File sumsFile = new File(contextDirectory, "sums.txt");
+        try {
+            PrintWriter pw = new PrintWriter(new FileWriter(file));
+            //TextDumper textDumper = new TextDumper(pw);
+            //textDumper.dump(appBook);
+            pw.println("This file is a pain");
+            pw.flush();
+        } catch (IOException e) {
+            printTextField.setText("ERROR: There was a problem saving information to the database");
+        }
+
+        /*
+        try (FileOutputStream outputStream = openFileOutput(appBook.getOwnerName() + ".txt", MODE_PRIVATE)) {
+            TextDumper textDumper = new TextDumper(new OutputStreamWriter(outputStream));
+            textDumper.dump(appBook);
+        } catch(IOException e) {
+            printTextField.setText("ERROR: There was a problem saving information to the database");
+        }
+
+         */
+
+        /*
+        try {
+            FileOutputStream fileout = openFileOutput(appBook.getOwnerName() + ".csv", MODE_PRIVATE);
+            TextDumper dumper = new TextDumper(name);
+            dumper.dump(appBook); //TODO make sure this line works with add and create for APP BOOKS
+        } catch(IOException e) {
+            printTextField.setText("ERROR: There was a problem saving information to the database");
+        }
+
+         */
     }
 }

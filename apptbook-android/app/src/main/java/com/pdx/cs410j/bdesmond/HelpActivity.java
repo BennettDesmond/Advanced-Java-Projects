@@ -24,6 +24,6 @@ public class HelpActivity extends AppCompatActivity {
             }
         });
         TextView helpView = findViewById(R.id.helpInfo);
-        helpView.setText("This program is a basic Appointment Book App. This app has the following three functionalities:\n\n[Add/Create] This page will add an appointment to an existing appointment book, or create a new appointment book. An appointment consists of a name, a description, a start date, and an end date.\n\n[Display] This option prints out all the appointments for the specified user.\n\n[Search] This option searches for appointments that start between the two entered dates for the specified user.");
+        helpView.setText("This program is a basic Appointment Book App written by Bennett Desmond. This app was built for Portland State's Advanced Java class and this is project 5. This app has the following three functionalities:\n\n[Add/Create] This page will add an appointment to an existing appointment book, or create a new appointment book. An appointment consists of a name, a description, a start date, and an end date.\n\n[Display] This option prints out all the appointments for the specified user.\n\n[Search] This option searches for appointments that start between the two entered dates for the specified user.");
     }
 }
