@@ -8,6 +8,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -254,6 +255,40 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void parseFileAndDump(String name, Appointment appointment) {
+
+        /*
+        Double  sums[];
+
+        File contextDirectory = getApplicationContext().getDataDir();
+        File sumsFile = new File(contextDirectory, "sums.txt");
+        if (!sumsFile.exists()) {
+            return;
+        }
+
+        try (
+                BufferedReader br = new BufferedReader(new FileReader(sumsFile))
+        ) {
+            String line = br.readLine();
+            while(line != null) {
+                Double sum = Double.parseDouble(line);
+                this.sums.add(sum);
+                line = br.readLine();
+            }
+        }
+
+        try (
+                PrintWriter pw = new PrintWriter(new FileWriter(sumsFile))
+        ) {
+            for (int i = 0; i < this.sums.getCount(); i++) {
+                Double sum = this.sums.getItem(i);
+                pw.println(sum);
+            }
+            pw.flush();
+        }
+
+         */
+
+
         AppointmentBook appBook;
 
         File contextDirectory = getApplicationContext().getDataDir();
@@ -273,6 +308,7 @@ public class AddActivity extends AppCompatActivity {
         } else {
             appBook = new AppointmentBook(name);
         }
+
 
         /*
         File file = new File(AddActivity.this.getFilesDir()+name+".txt");
@@ -298,6 +334,7 @@ public class AddActivity extends AppCompatActivity {
         }
 
          */
+
         boolean nameComparison = name.equals(appBook.getOwnerName());
         if(!nameComparison && (!appBook.getOwnerName().equals(""))) {
             printTextField.setText("ERROR: There is a database issue with "+name+"'s Appointment Book");
@@ -310,13 +347,14 @@ public class AddActivity extends AppCompatActivity {
         //File sumsFile = new File(contextDirectory, "sums.txt");
         try {
             PrintWriter pw = new PrintWriter(new FileWriter(file));
-            //TextDumper textDumper = new TextDumper(pw);
-            //textDumper.dump(appBook);
-            pw.println("This file is a pain");
-            pw.flush();
+            TextDumper textDumper = new TextDumper(pw);
+            textDumper.dump(appBook);
+            //pw.println("This file is a pain");
+            //pw.flush();
         } catch (IOException e) {
             printTextField.setText("ERROR: There was a problem saving information to the database");
         }
+
 
         /*
         try (FileOutputStream outputStream = openFileOutput(appBook.getOwnerName() + ".txt", MODE_PRIVATE)) {

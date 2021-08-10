@@ -54,14 +54,19 @@ public class DisplayActivity extends AppCompatActivity {
         if (file.exists()) {
             try {
                 BufferedReader br = new BufferedReader(new FileReader(file));
-                TextParser parser = new TextParser(br);
-                appBook = parser.parse();
+                if(!br.ready()) {
+                    appBook = new AppointmentBook(name);
+                } else {
+                    TextParser parser = new TextParser(br);
+                    appBook = parser.parse();
+                }
             } catch (IOException | ParserException e) {
-                appBook = new AppointmentBook();
+                appBook = new AppointmentBook(name);
             }
         } else {
-            appBook = new AppointmentBook();
+            appBook = new AppointmentBook(name);
         }
+
         /*
         File file = new File(DisplayActivity.this.getFilesDir()+name+".txt");
         try {

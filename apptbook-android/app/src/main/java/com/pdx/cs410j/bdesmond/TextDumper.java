@@ -44,6 +44,7 @@ public class TextDumper implements AppointmentBookDumper<AppointmentBook>{
         for (Appointment app : appBook.getAppointments()) {
             writer.println(app.getDescription()+","+app.getBeginTimeString()+","+app.getEndTimeString());
         }
+        writer.flush();
     }
 
     public void dumpAppointment(Appointment app) throws IOException{
