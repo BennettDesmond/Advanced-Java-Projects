@@ -2,9 +2,13 @@ package com.pdx.cs410j.bdesmond;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -26,6 +30,7 @@ public class DisplayActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
+        setupUI(findViewById(R.id.parent));
 
         displayTextField = findViewById(R.id.displayResults);
 
@@ -47,6 +52,8 @@ public class DisplayActivity extends AppCompatActivity {
         EditText nameText = findViewById(R.id.nameText);
         String name = nameText.getText().toString();
 
+        nameText.setText("");
+
         AppointmentBook appBook;
 
         File contextDirectory = getApplicationContext().getDataDir();
@@ -67,19 +74,7 @@ public class DisplayActivity extends AppCompatActivity {
             appBook = new AppointmentBook(name);
         }
 
-        /*
-        File file = new File(DisplayActivity.this.getFilesDir()+name+".txt");
-        try {
-            TextParser parser = new TextParser(new BufferedReader(new FileReader(file)));
-            appBook = parser.parse();
-        } catch (ParserException | FileNotFoundException e) {
-            displayTextField.setText("ERROR: There was a problem reading from the database");
-            return;
-        }
-
-         */
-
-        if(appBook.getOwnerName().equals("")) {
+        if(appBook.getAppointments().size() == 0) {
             displayTextField.setText("ERROR: "+name+" does not have an Appointment Book");
             return;
         }
@@ -91,9 +86,43 @@ public class DisplayActivity extends AppCompatActivity {
 
         PrettyPrinter printer = new PrettyPrinter(displayTextField);
         try {
+            displayTextField.setText(appBook.getOwnerName() + "'s Appointment Book (" + appBook.getAppointments().size() + " Appointment(s))\n");
             printer.dump(appBook);
         } catch(IOException e) {
             displayTextField.setText("ERROR: A problem occurred while trying to display the Appointment Book");
+        }
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        if(inputMethodManager.isAcceptingText()){
+            inputMethodManager.hideSoftInputFromWindow(
+                    activity.getCurrentFocus().getWindowToken(),
+                    0
+            );
+        }
+    }
+
+    public void setupUI(View view) {
+
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(DisplayActivity.this);
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
         }
     }
 }

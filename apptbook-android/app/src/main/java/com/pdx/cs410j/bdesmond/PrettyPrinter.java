@@ -44,18 +44,18 @@ public class PrettyPrinter implements AppointmentBookDumper<AppointmentBook>{
         StringBuilder output = new StringBuilder();
 
         LinkedList appointments = (LinkedList) appBook.getAppointments();
-        output.append("*****************************************************\n");
-        output.append(appBook.getOwnerName() + "'s Appointment Book (" + appointments.size() + " Appointment(s))\n");
-        output.append("*****************************************************\n");
+        //output.append("*****************************************************\n");
+        //output.append(appBook.getOwnerName() + "'s Appointment Book (" + appointments.size() + " Appointment(s))\n");
+        //output.append("*****************************************************\n");
+        output.append("------------------------------------------------------------------------------------------\n");
 
         for (int i = 0; i < appointments.size(); i++) {
             Appointment app = (Appointment) appointments.get(i);
-            output.append("------------------------------------------------------------------------------------------\n");
             output.append("Timing: " + app.getBeginTimeString() + " -- " + app.getEndTimeString() + " (" + findDifference(app.getBeginTimeString(),app.getEndTimeString()) + ")\n");
             output.append("Description: " + app.getDescription()+"\n");
             output.append("------------------------------------------------------------------------------------------\n");
         }
-        outputField.setText(output);
+        outputField.append(output);
     }
 
 

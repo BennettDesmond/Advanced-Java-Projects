@@ -2,12 +2,16 @@ package com.pdx.cs410j.bdesmond;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -50,7 +54,8 @@ public class AddActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
-        //initDatePicker();
+        setupUI(findViewById(R.id.parent));
+
         startDateButton = findViewById(R.id.startDatePickerButton);
         startDateButton.setText(getTodaysDate());
         endDateButton = findViewById(R.id.endDatePickerButton);
@@ -154,13 +159,6 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
-    /*
-    public void openDatePicker(View view) {
-        datePickerDialog.show();
-    }
-
-     */
-
     public void startTimePicker(View view) {
         TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
             @Override
@@ -206,43 +204,57 @@ public class AddActivity extends AppCompatActivity {
         String name = nameText.getText().toString();
         EditText descriptionText = findViewById(R.id.descriptionText);
         String description = descriptionText.getText().toString();
-        //Button startDateText = findViewById(R.id.startDatePickerButton);
         String startDate = startDateButton.getText().toString();
-        //Button endDateText = findViewById(R.id.endDatePickerButton);
         String endDate = endDateButton.getText().toString();
-        //Button startTimeText = findViewById(R.id.startTimePickerButton);
         String startTime = startTimeButton.getText().toString();
-        //Button endTimeText = findViewById(R.id.endTimePickerButton);
         String endTime = endTimeButton.getText().toString();
-
-        if((name.equals(""))||(description.equals(""))) {
-            printTextField.setText("ERROR: An Appointment Cannot be created without having both a name and a description");
-            return;
-        }
-
-        startDateButton.setText(getTodaysDate());
-        endDateButton.setText(getTodaysDate());
-        startTimeButton.setText("11:59");
-        endTimeButton.setText("11:59");
-        nameText.setText("");
-        descriptionText.setText("");
-
         Date start = convertStringToDate(startDate+" "+startTime);
         Date end = convertStringToDate(endDate+" "+endTime);
-        if ((start == null)||(end == null))
-            printTextField.setText("ERROR: The Date is formatted incorrectly");
+
+        resetUIFields(nameText, descriptionText);
+
+        if (!inputValueCheck(name, description, start, end)) return;
         Appointment newApp = new Appointment(start,end,description);
         parseFileAndDump(name,newApp);
 
         if(printResults) {
             printTextField.setText(newApp.toString());
+        } else {
+            printTextField.setText("");
         }
     }
 
+    private boolean inputValueCheck(String name, String description, Date start, Date end) {
+        if((name.equals(""))||(description.equals(""))) {
+            printTextField.setText("ERROR: An Appointment Cannot be created without having both a name and a description");
+            return false;
+        }
+        if ((start == null)||(end == null)) {
+            printTextField.setText("ERROR: The Date is formatted incorrectly");
+            return false;
+        }
+        if(start.compareTo(end) > 0) {
+            printTextField.setText("ERROR: The appointment Cannot end before it started");
+            return false;
+        }
+        return true;
+    }
+
+    private void resetUIFields(EditText nameText, EditText descriptionText) {
+        startDateButton.setText(getTodaysDate());
+        endDateButton.setText(getTodaysDate());
+        startTimeButton.setText("11:59 PM");
+        endTimeButton.setText("11:59 PM");
+        nameText.setText("");
+        descriptionText.setText("");
+    }
+
+    //Check the -print checkbox to see if it was selected
     public void printUpdate(View view) {
         printResults = ((CheckBox) view).isChecked();
     }
 
+    //Convert string date to Date object
     private Date convertStringToDate(String dateString) {
         Date dateClassObj = new Date();
         DateFormat format = new SimpleDateFormat("MMM dd yyyy hh:mm a");
@@ -255,42 +267,9 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void parseFileAndDump(String name, Appointment appointment) {
-
-        /*
-        Double  sums[];
-
-        File contextDirectory = getApplicationContext().getDataDir();
-        File sumsFile = new File(contextDirectory, "sums.txt");
-        if (!sumsFile.exists()) {
-            return;
-        }
-
-        try (
-                BufferedReader br = new BufferedReader(new FileReader(sumsFile))
-        ) {
-            String line = br.readLine();
-            while(line != null) {
-                Double sum = Double.parseDouble(line);
-                this.sums.add(sum);
-                line = br.readLine();
-            }
-        }
-
-        try (
-                PrintWriter pw = new PrintWriter(new FileWriter(sumsFile))
-        ) {
-            for (int i = 0; i < this.sums.getCount(); i++) {
-                Double sum = this.sums.getItem(i);
-                pw.println(sum);
-            }
-            pw.flush();
-        }
-
-         */
-
-
         AppointmentBook appBook;
 
+        //Parse from file
         File contextDirectory = getApplicationContext().getDataDir();
         File file = new File(contextDirectory, (name+".txt"));
         if (file.exists()) {
@@ -309,72 +288,55 @@ public class AddActivity extends AppCompatActivity {
             appBook = new AppointmentBook(name);
         }
 
-
-        /*
-        File file = new File(AddActivity.this.getFilesDir()+name+".txt");
-        try {
-            TextParser parser = new TextParser(new BufferedReader(new FileReader(file)));
-            appBook = parser.parse();
-        } catch (ParserException | FileNotFoundException e) {
-            //printTextField.setText("ERROR: There was a problem reading from the database");
-            //return;
-            appBook = new AppointmentBook(name);
-        }
-
-         */
-
-
-        /*
-        try {
-            TextParser parser = new TextParser(name);
-            appBook = parser.parse();
-        } catch (ParserException e) {
-            printTextField.setText("ERROR: There was a problem reading from the database");
-            return;
-        }
-
-         */
-
         boolean nameComparison = name.equals(appBook.getOwnerName());
         if(!nameComparison && (!appBook.getOwnerName().equals(""))) {
             printTextField.setText("ERROR: There is a database issue with "+name+"'s Appointment Book");
             return;
         }
 
+        //Add new appointment to appointment book
         appBook.addAppointment(appointment);
 
-        //File contextDirectory = getApplicationContext().getDataDir();
-        //File sumsFile = new File(contextDirectory, "sums.txt");
+        //Write to file
         try {
             PrintWriter pw = new PrintWriter(new FileWriter(file));
             TextDumper textDumper = new TextDumper(pw);
             textDumper.dump(appBook);
-            //pw.println("This file is a pain");
-            //pw.flush();
         } catch (IOException e) {
             printTextField.setText("ERROR: There was a problem saving information to the database");
         }
+    }
 
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        if(inputMethodManager.isAcceptingText()){
+            inputMethodManager.hideSoftInputFromWindow(
+                    activity.getCurrentFocus().getWindowToken(),
+                    0
+            );
+        }
+    }
 
-        /*
-        try (FileOutputStream outputStream = openFileOutput(appBook.getOwnerName() + ".txt", MODE_PRIVATE)) {
-            TextDumper textDumper = new TextDumper(new OutputStreamWriter(outputStream));
-            textDumper.dump(appBook);
-        } catch(IOException e) {
-            printTextField.setText("ERROR: There was a problem saving information to the database");
+    public void setupUI(View view) {
+
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(AddActivity.this);
+                    return false;
+                }
+            });
         }
 
-         */
-
-        /*
-        try {
-            FileOutputStream fileout = openFileOutput(appBook.getOwnerName() + ".csv", MODE_PRIVATE);
-            TextDumper dumper = new TextDumper(name);
-            dumper.dump(appBook); //TODO make sure this line works with add and create for APP BOOKS
-        } catch(IOException e) {
-            printTextField.setText("ERROR: There was a problem saving information to the database");
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
         }
-
-         */
     }
 }
